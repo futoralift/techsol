@@ -245,22 +245,24 @@ export default function AboutStoryPage() {
               {/* LEFT MEMBER CARD */}
               <motion.div variants={fadeInUp} className="md:col-span-4 bg-white p-6 rounded-[16px] border border-neutral-200/70 flex flex-col justify-between text-left shadow-[0_4px_30px_rgba(0,0,0,0.02)] transition-all duration-300 hover:shadow-md">
                 <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
-                  <div className="w-full h-full relative rounded-lg overflow-hidden bg-neutral-100">
-                    <Image
-                      src="/about/swaraj.jpeg"
-                      alt="About TechSol Media"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 360px"
-                    />
+                  <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
+                    <div className="w-full h-full relative overflow-hidden">
+                      <Image
+                        src="/about/shivrajmane.jpeg"
+                        alt="Shivraj Mane- Founder Shiva Digital"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 360px"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#0A0A0A]">Swaraj Wadavale</h3>
+                  <h3 className="text-xl font-bold text-[#0A0A0A]">Shivraj Mane</h3>
                   <p className="text-xs uppercase font-semibold text-neutral-400 tracking-wider mt-1">
-                    Founder...SynergexAI
+                    Founder .. Shiva Digital
                     <br />
-                    (Technology Partner)
+                    (Digital Marketing Partner)
                   </p>
                   <div className="flex gap-2 mt-4 text-[11px] font-semibold text-white">
                     <span className="bg-[#0A0A0A] px-2 py-0.5 rounded cursor-pointer hover:bg-[#FF5500] transition-colors">in</span>
@@ -299,31 +301,30 @@ export default function AboutStoryPage() {
 
               {/* RIGHT MEMBER CARD */}
               <motion.div variants={fadeInUp} className="md:col-span-4 bg-white p-6 rounded-[16px] border border-neutral-200/70 flex flex-col justify-between text-left shadow-[0_4px_30px_rgba(0,0,0,0.02)] transition-all duration-300 hover:shadow-md">
-                <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
-                  <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
-                    <div className="w-full h-full relative overflow-hidden">
-                      <Image
-                        src="/about/shivrajmane.jpeg"
-                        alt="Shivraj Mane- Founder Shiva Digital"
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 360px"
-                      />
-                    </div>
+              <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
+                  <div className="w-full h-full relative rounded-lg overflow-hidden bg-neutral-100">
+                    <Image
+                      src="/about/swaraj.jpeg"
+                      alt="About TechSol Media"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 360px"
+                    />
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#0A0A0A]">Shivraj Mane</h3>
+                  <h3 className="text-xl font-bold text-[#0A0A0A]">Swaraj Wadavale</h3>
                   <p className="text-xs uppercase font-semibold text-neutral-400 tracking-wider mt-1">
-                    Founder .. Shiva Digital
+                    Founder...SynergexAI
                     <br />
-                    (Digital Marketing Partner)
+                    (Technology Partner)
                   </p>
                   <div className="flex gap-2 mt-4 text-[11px] font-semibold text-white">
                     <span className="bg-[#0A0A0A] px-2 py-0.5 rounded cursor-pointer hover:bg-[#FF5500] transition-colors">in</span>
                     <span className="bg-[#0A0A0A] px-2 py-0.5 rounded cursor-pointer hover:bg-[#FF5500] transition-colors">𝕏</span>
                   </div>
                 </div>
+                
               </motion.div>
 
             </div>
@@ -356,7 +357,6 @@ export default function AboutStoryPage() {
                 Ready to start your next project?
               </h2>
 
-              {/* Direct Link redirecting to contact page form */}
               <Link
                 href="/contact"
                 className="inline-block bg-[#05050A] text-white text-[13px] font-bold px-6 py-3.5 rounded-xl hover:bg-neutral-800 transition-colors shadow-md text-center cursor-pointer"
@@ -389,7 +389,6 @@ export default function AboutStoryPage() {
                 Pick a time that works for you.
               </p>
 
-              {/* Direct Link redirecting to contact page form */}
               <Link
                 href="/contact"
                 className="mt-5 w-full block bg-[#FF5500] text-white text-[13px] font-bold py-3.5 rounded-xl hover:bg-[#E04B00] transition-colors shadow-sm text-center cursor-pointer"
