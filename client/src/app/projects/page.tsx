@@ -47,7 +47,7 @@ const projects = [
     title: "Harvest Organics",
     industry: "Food & Sustainable Goods",
     scope: "Packaging Design + Brand System",
-    image: "/projects/harvest-organics.jpg",
+    image: "/projects/harvest.png",
   },
   {
     id: 7,
@@ -73,7 +73,7 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.16, 1, 0.3, 1] as const, // <-- Add 'as const' here
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   },
 };
@@ -99,11 +99,11 @@ export default function ProjectsShowcase() {
   return (
     <div className="min-h-screen bg-[#F4F2F0] text-[#0A0A0A] font-sans antialiased relative">
 
-      {/* Main Viewport Container */}
-      <main className="pt-16 pb-24 px-4 flex flex-col items-center max-w-[1200px] mx-auto">
+      {/* Main Viewport Container - Increased pt-16 to pt-36 for floating navbar clearance */}
+      <main className="pt-32 sm:pt-36 pb-24 px-4 flex flex-col items-center max-w-[1200px] mx-auto">
 
         {/* Page Title Header */}
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-center mb-16 mt-6">
+        <h1 className="text-4xl md:text-6xl font-normal tracking-tight text-center mb-16 mt-2">
           Project Showcase
         </h1>
 
@@ -157,14 +157,14 @@ export default function ProjectsShowcase() {
         )}
 
         {/* Call-to-Action Card */}
-        <motion.section 
+        <motion.section
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeInUp}
           className="mt-16 mx-auto w-full max-w-[1000px] bg-[#F4F2F0] rounded-[16px] border border-white p-5 flex items-center justify-center relative shadow-[inset_0px_0px_6px_0px_rgba(6,6,18,0.18)] overflow-clip"
         >
-          <motion.div 
+          <motion.div
             variants={containerStagger}
             className="w-full h-[400px] relative rounded-[12px] overflow-hidden bg-gradient-to-br from-[#FCDAA2] via-[#FBA85B] to-[#FF5500] flex flex-col md:flex-row items-center justify-between px-10 md:px-16 py-8 shadow-sm"
           >
