@@ -518,7 +518,7 @@ export default function TechSolLandingPage() {
 
           <Image
             ref={logo2Ref}
-            src="/B.png"
+            src="/B..png"
             alt="Logo"
             width={80}
             height={80}
