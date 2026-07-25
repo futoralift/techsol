@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // Total 8 Projects Data Model
 const projects = [
@@ -73,7 +73,7 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as const, // <-- Add 'as const' here
     },
   },
 };
@@ -90,29 +90,7 @@ const containerStagger = {
 };
 
 export default function ProjectsShowcase() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(4);
-
-  // Framer Motion variants for Header entry sequence
-  const containerVariants = {
-    hidden: { opacity: 0, y: -20, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.25, 1, 0.5, 1],
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-  };
 
   const handleLoadMore = () => {
     setVisibleCount(projects.length);
@@ -120,9 +98,6 @@ export default function ProjectsShowcase() {
 
   return (
     <div className="min-h-screen bg-[#F4F2F0] text-[#0A0A0A] font-sans antialiased relative">
-
-      {/* GLOBAL NAVBAR COMPONENT */}
-      
 
       {/* Main Viewport Container */}
       <main className="pt-16 pb-24 px-4 flex flex-col items-center max-w-[1200px] mx-auto">
@@ -207,7 +182,6 @@ export default function ProjectsShowcase() {
                 Ready to start your next project?
               </h2>
 
-              {/* Direct Link redirecting to contact page form */}
               <Link
                 href="/contact"
                 className="inline-block bg-[#05050A] text-white text-[13px] font-bold px-6 py-3.5 rounded-xl hover:bg-neutral-800 transition-colors shadow-md text-center cursor-pointer"
@@ -240,7 +214,6 @@ export default function ProjectsShowcase() {
                 Pick a time that works for you.
               </p>
 
-              {/* Direct Link redirecting to contact page form */}
               <Link
                 href="/contact"
                 className="mt-5 w-full block bg-[#FF5500] text-white text-[13px] font-bold py-3.5 rounded-xl hover:bg-[#E04B00] transition-colors shadow-sm text-center cursor-pointer"

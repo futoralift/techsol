@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Lenis from 'lenis';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 export default function AboutStoryPage() {
   // Initialize Smooth Scroll with Lenis
@@ -27,8 +27,8 @@ export default function AboutStoryPage() {
     };
   }, []);
 
-  // Animation variants for staggered scroll reveals
-  const fadeInUp = {
+  // Explicitly typing variants resolves the Framer Motion easing type mismatch error
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -37,7 +37,7 @@ export default function AboutStoryPage() {
     },
   };
 
-  const containerStagger = {
+  const containerStagger: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -275,7 +275,7 @@ export default function AboutStoryPage() {
                   <div className="w-full h-[260px] bg-neutral-950 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
                     <div className="w-full h-full relative overflow-hidden">
                       <Image
-                        src="/about/shubham.jpeg" // Replace with your founder image path (e.g., /about/shubham.jpg)
+                        src="/about/shubham.jpeg"
                         alt="Shubham Barure - Founder & Creative Director"
                         fill
                         className="object-cover"
@@ -303,7 +303,7 @@ export default function AboutStoryPage() {
                   <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
                     <div className="w-full h-full relative overflow-hidden">
                       <Image
-                        src="/about/shivrajmane.jpeg" // Replace with your image path (e.g., /about/sophia.jpg)
+                        src="/about/shivrajmane.jpeg"
                         alt="Shivraj Mane- Founder Shiva Digital"
                         fill
                         className="object-cover"

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Plus, Minus, Mail, Phone, MapPin } from 'lucide-react';
 import { Geist, Caveat } from 'next/font/google';
 
@@ -95,21 +95,19 @@ export default function ContactPage() {
     },
   ];
 
-  // Animation variants
-  const fadeInUp = {
+  // Animation variants explicitly typed
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1.0] },
+      transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1.0] as const },
     },
   };
 
   return (
     <div className="min-h-screen w-full bg-[#F5F5F5] text-[#0A0A0A] font-sans antialiased overflow-x-hidden selection:bg-orange-500 selection:text-white flex flex-col items-center">
       
-      
-
       {/* ─── CONTACT FORM & INFO SECTION ─── */}
       <motion.section
         initial="hidden"
@@ -125,7 +123,7 @@ export default function ContactPage() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-1 border border-neutral-300/60 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm mb-6"
           >
-            <span className="text-[11px] font-bold tracking-[0.25em] uppercase text-neutral-500">⁘ LET'S CONNECT ⁘</span>
+            <span className="text-[11px] font-bold tracking-[0.25em] uppercase text-neutral-500">⁘ LET&apos;S CONNECT ⁘</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -164,7 +162,7 @@ export default function ContactPage() {
 
             <div className="mt-16 pt-8 border-t border-dashed border-neutral-200/80">
               <p className="text-neutral-600 italic leading-relaxed text-sm sm:text-base mb-4">
-                "Their attention to detail and commitment to quality set them apart. The new dashboard improved both usability and client satisfaction."
+                &quot;Their attention to detail and commitment to quality set them apart. The new dashboard improved both usability and client satisfaction.&quot;
               </p>
               <span className="text-xs font-bold tracking-wider uppercase text-[#060612]">
                 SHUBHAM BARURE — <span className="text-neutral-400 font-medium">FOUNDER, TECHSOLMEDIA</span>
@@ -263,9 +261,9 @@ export default function ContactPage() {
           <div className="text-center mb-16 relative">
             <span className="text-[11px] font-bold tracking-[0.25em] uppercase text-neutral-500 block mb-3">⁘ GOT QUESTIONS ⁘</span>
             <h2 className={`${geist.className} text-4xl sm:text-5xl font-black tracking-tight text-[#060612] relative inline-block`}>
-              We've got answers
+              We&apos;ve got answers
               <div className="absolute -right-20 -top-8 hidden md:flex flex-col items-start pointer-events-none select-none">
-                <span className={`${caveat.className} text-orange-500 text-sm whitespace-nowrap mb-1`}>Let's clear things up</span>
+                <span className={`${caveat.className} text-orange-500 text-sm whitespace-nowrap mb-1`}>Let&apos;s clear things up</span>
                 <svg width="24" height="16" viewBox="0 0 24 16" fill="none" className="text-orange-500 ml-2">
                   <path d="M1 14C5 10 12 4 22 2M22 2L15 1M22 2L21 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -327,7 +325,7 @@ export default function ContactPage() {
 
             {/* Left Column Content */}
             <div className="flex flex-col items-start max-w-xs sm:max-w-sm md:max-w-[380px] z-10 text-left">
-              <span className="text-[10px] font-bold tracking-widest text-[#0A0A0A]/60 uppercase mb-3">LET'S BUILD SOMETHING GREAT</span>
+              <span className="text-[10px] font-bold tracking-widest text-[#0A0A0A]/60 uppercase mb-3">LET&apos;S BUILD SOMETHING GREAT</span>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0A0A0A] leading-[1.1] mb-6">
                 Ready to start your next project?
               </h2>

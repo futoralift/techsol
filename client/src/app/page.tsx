@@ -65,13 +65,16 @@ const ROW_1_IMAGES = [...SECTION_2_IMAGES, ...SECTION_2_IMAGES, ...SECTION_2_IMA
 const ROW_2_IMAGES = [...SECTION_2_IMAGES.slice().reverse(), ...SECTION_2_IMAGES.slice().reverse(), ...SECTION_2_IMAGES.slice().reverse()];
 
 // --- SHARED ANIMATIONS ---
-const fadeInUp = {
-  hidden: { opacity: 0, y: 25 },
-  visible: (custom: number = 0) => ({
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay: custom, ease: [0.215, 0.61, 0.355, 1] },
-  }),
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1.0] as const,
+    },
+  },
 };
 
 const cardFloat = (delay: number) => ({
@@ -256,42 +259,48 @@ const REVIEWS = [
     name: "Dr. Sayali Vaidya",
     role: "Founder, V Anvitaara Training Center, Pune",
     avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-    text: "A highly creative professional who understands both design and business objectives. His work helped us present our brand with greater clarity, confidence, and impact."
+    text: "A highly creative professional who understands both design and business objectives. His work helped us present our brand with greater clarity, confidence, and impact.",
+    stars: 5
   },
   {
     id: 2,
     name: "Rajesh Kanmuse",
     role: "Owner, Yashraj Tyres, Latur",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-    text: "Professional, creative, and highly dependable. Shubham's work helped us present our brand with greater clarity, consistency, and impact."
+    text: "Professional, creative, and highly dependable. Shubham's work helped us present our brand with greater clarity, consistency, and impact.",
+    stars: 5
   },
   {
     id: 3,
     name: "Shubham M.",
     role: "Founder, Arihant Industries, Pune",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-    text: "Creative, professional, and result-oriented. Shubham's work brought clarity, consistency, and a stronger visual identity to our brand."
+    text: "Creative, professional, and result-oriented. Shubham's work brought clarity, consistency, and a stronger visual identity to our brand.",
+    stars: 5
   },
   {
     id: 4,
     name: "Swaraj V W.",
     role: "Founder",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-    text: "Their process was smooth, collaborative, and incredibly intuitive — the final result reflects our identity perfectly."
+    text: "Their process was smooth, collaborative, and incredibly intuitive — the final result reflects our identity perfectly.",
+    stars: 5
   },
   {
     id: 5,
     name: "Manish Shinde",
     role: "Manager",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-    text: "From concept to execution, they understood our goals and crafted a digital experience that feels uniquely ours."
+    text: "From concept to execution, they understood our goals and crafted a digital experience that feels uniquely ours.",
+    stars: 5
   },
   {
     id: 6,
     name: "Aditya Sharma",
     role: "CEO",
     avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
-    text: "They made everything simple and efficient, turning our brand vision into a polished product that elevates our online presence."
+    text: "They made everything simple and efficient, turning our brand vision into a polished product that elevates our online presence.",
+    stars: 5
   }
 ];
 
@@ -509,7 +518,7 @@ export default function TechSolLandingPage() {
 
           <Image
             ref={logo2Ref}
-            src="/B..png"
+            src="/B.png"
             alt="Logo"
             width={80}
             height={80}

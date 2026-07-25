@@ -3,8 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Lenis from 'lenis';
-import { motion } from 'framer-motion';
-import Navbar from "@/components/Navbar";
+import { motion, Variants } from 'framer-motion';
 
 export default function BlogPage() {
   // Initialize Smooth Scroll with Lenis
@@ -27,18 +26,21 @@ export default function BlogPage() {
     };
   }, []);
 
-  // Standard fade & slide up animation
-  const fadeInUp = {
+  // Standard fade & slide up animation typed as Variants
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1.0] },
+      transition: { 
+        duration: 0.6, 
+        ease: [0.25, 0.1, 0.25, 1.0] as const 
+      },
     },
   };
 
   // Stagger wrapper for inner elements
-  const containerStagger = {
+  const containerStagger: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -50,7 +52,7 @@ export default function BlogPage() {
   };
 
   // Custom Bouncing Animation from Upside
-  const bounceInDown = {
+  const bounceInDown: Variants = {
     hidden: { opacity: 0, y: -80 },
     visible: {
       opacity: 1,
@@ -183,7 +185,7 @@ export default function BlogPage() {
       </motion.section>
 
       {/* ─── FOOTER SECTION ─── */}
-       <footer className="w-full bg-[#F4F2F0] pt-20 pb-12 px-6 font-sans">
+      <footer className="w-full bg-[#F4F2F0] pt-20 pb-12 px-6 font-sans">
         <div className="max-w-[1000px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-8">
 
           {/* Column 1: Brand & Newsletter */}
@@ -248,7 +250,6 @@ export default function BlogPage() {
                     Privacy Policy
                   </Link>
                 </li>
-                
               </ul>
             </div>
           </div>
