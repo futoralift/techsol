@@ -66,7 +66,7 @@ export default function AboutStoryPage() {
             〈 ABOUT US 〉
           </motion.span>
 
-          <motion.h1 variants={fadeInUp} className="text-4xl md:text-[56px] font-black tracking-tight text-[#0A0A0A] mb-12 leading-[1.1]">
+          <motion.h1 variants={fadeInUp} className="text-4xl md:text-[56px] font-normal tracking-tight text-[#0A0A0A] mb-12 leading-[1.1]">
             Who we are
           </motion.h1>
 
@@ -301,7 +301,7 @@ export default function AboutStoryPage() {
 
               {/* RIGHT MEMBER CARD */}
               <motion.div variants={fadeInUp} className="md:col-span-4 bg-white p-6 rounded-[16px] border border-neutral-200/70 flex flex-col justify-between text-left shadow-[0_4px_30px_rgba(0,0,0,0.02)] transition-all duration-300 hover:shadow-md">
-              <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
+                <div className="w-full h-[220px] bg-neutral-100 rounded-xl mb-6 relative overflow-hidden border border-neutral-200/50">
                   <div className="w-full h-full relative rounded-lg overflow-hidden bg-neutral-100">
                     <Image
                       src="/about/swaraj.jpeg"
@@ -324,7 +324,7 @@ export default function AboutStoryPage() {
                     <span className="bg-[#0A0A0A] px-2 py-0.5 rounded cursor-pointer hover:bg-[#FF5500] transition-colors">𝕏</span>
                   </div>
                 </div>
-                
+
               </motion.div>
 
             </div>
