@@ -1,18 +1,10 @@
 {
-  "name": "techsol-media",
+  "name": "techsol-media-root",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "client"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace=client",
-    "build": "npm run build --workspace=client",
-    "start": "npm run start --workspace=client"
-  },
-  "dependencies": {
-    "next": "^16.2.10",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "dev": "npm run dev --prefix client",
+    "build": "cd client && npm install && npm run build",
+    "start": "npm run start --prefix client"
   }
 }
