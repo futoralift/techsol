@@ -20,59 +20,35 @@ export function ParticleCursor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    // Disable on touch-only devices to save battery and GPU cycles
+    if (typeof window === "undefined" || !window.matchMedia("(pointer: fine)").matches) {
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationFrameId: number;
+    let animationFrameId: number | null = null;
     let sparkles: Sparkle[] = [];
+    let isRunning = false;
 
-    // Resize canvas to full window size
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     handleResize();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
-    // Faint orange color variations (RGB strings)
     const faintOrangePalette = [
-      "255, 170, 100", // Soft Peach / Faint Orange
-      "255, 140, 66",  // Warm Soft Amber
-      "255, 190, 130", // Light Creamy Orange
-      "255, 210, 160", // Faint Golden Tint
+      "255, 170, 100",
+      "255, 140, 66",
+      "255, 190, 130",
+      "255, 210, 160",
     ];
 
-    // Spawn star sparkles as the cursor moves
-    const handleMouseMove = (e: MouseEvent) => {
-      const count = 3; // Particles generated per move
-
-      for (let i = 0; i < count; i++) {
-        const color = faintOrangePalette[Math.floor(Math.random() * faintOrangePalette.length)];
-        const size = Math.random() * 9 + 5; // Star size (5px to 14px)
-        const maxAlpha = Math.random() * 0.45 + 0.25; // Keep opacity faint (25% - 70%)
-
-        sparkles.push({
-          x: e.clientX + (Math.random() - 0.5) * 16,
-          y: e.clientY + (Math.random() - 0.5) * 16,
-          size,
-          vx: (Math.random() - 0.5) * 1.2,
-          vy: (Math.random() - 0.5) * 1.2 - 0.2, // Very light drift
-          alpha: maxAlpha,
-          maxAlpha,
-          decay: Math.random() * 0.015 + 0.008, // Fades out gently
-          color,
-          rotation: Math.random() * Math.PI,
-          rotSpeed: (Math.random() - 0.5) * 0.05,
-        });
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    // Sharp 4-Point Star drawing function
     const drawStar = (
       ctx: CanvasRenderingContext2D,
       x: number,
@@ -86,15 +62,12 @@ export function ParticleCursor() {
       ctx.translate(x, y);
       ctx.rotate(rotation);
 
-      // Faint ambient glow
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = `rgba(${color}, ${alpha * 0.6})`;
-
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = `rgba(${color}, ${alpha * 0.5})`;
       ctx.fillStyle = `rgba(${color}, ${alpha})`;
 
-      // Precise 4-point star shape
       const rOuter = size;
-      const rInner = size * 0.15; // Thin waist for a sharp star flare
+      const rInner = size * 0.15;
 
       ctx.beginPath();
       for (let i = 0; i < 8; i++) {
@@ -109,7 +82,6 @@ export function ParticleCursor() {
       ctx.closePath();
       ctx.fill();
 
-      // Bright center core for the sparkle dot
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
       ctx.beginPath();
       ctx.arc(0, 0, size * 0.12, 0, Math.PI * 2);
@@ -118,7 +90,6 @@ export function ParticleCursor() {
       ctx.restore();
     };
 
-    // Main animation loop
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -132,34 +103,61 @@ export function ParticleCursor() {
         if (s.alpha <= 0) {
           sparkles.splice(i, 1);
         } else {
-          drawStar(
-            ctx,
-            s.x,
-            s.y,
-            s.size,
-            s.rotation,
-            s.color,
-            s.alpha
-          );
+          drawStar(ctx, s.x, s.y, s.size, s.rotation, s.color, s.alpha);
         }
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      if (sparkles.length > 0) {
+        animationFrameId = requestAnimationFrame(render);
+      } else {
+        isRunning = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     };
 
-    render();
+    const handleMouseMove = (e: MouseEvent) => {
+      const count = 3;
+      for (let i = 0; i < count; i++) {
+        const color = faintOrangePalette[Math.floor(Math.random() * faintOrangePalette.length)];
+        const size = Math.random() * 8 + 4;
+        const maxAlpha = Math.random() * 0.45 + 0.25;
+
+        sparkles.push({
+          x: e.clientX + (Math.random() - 0.5) * 16,
+          y: e.clientY + (Math.random() - 0.5) * 16,
+          size,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: (Math.random() - 0.5) * 1.2 - 0.2,
+          alpha: maxAlpha,
+          maxAlpha,
+          decay: Math.random() * 0.018 + 0.01,
+          color,
+          rotation: Math.random() * Math.PI,
+          rotSpeed: (Math.random() - 0.5) * 0.05,
+        });
+      }
+
+      if (!isRunning) {
+        isRunning = true;
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-[9999] h-full w-full"
+      className="pointer-events-none fixed inset-0 z-[9999] h-full w-full hidden md:block"
     />
   );
 }

@@ -305,105 +305,92 @@ const REVIEWS = [
 ];
 
 // --- MAIN REACT COMPONENT ---
+// --- MAIN REACT COMPONENT ---
 export default function TechSolLandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeProject, setActiveProject] = useState(0);
-  const [currentFrameworkIdx, setCurrentFrameworkIdx] = useState(2);
+  const [currentFrameworkIdx, setCurrentFrameworkIdx] = useState(0);
   const [counterIndex, setCounterIndex] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [isSection3Toggled, setIsSection3Toggled] = useState(false);
 
-  //------gsap------//
+  // GSAP Refs
   const logo1Ref = useRef(null);
   const logo2Ref = useRef(null);
   const logo3Ref = useRef(null);
-
   const rightLogo1Ref = useRef(null);
   const rightLogo2Ref = useRef(null);
   const rightLogo3Ref = useRef(null);
 
   useEffect(() => {
-    // LEFT CURVE
-    const leftLogos = [
-      { ref: logo1Ref, start: 0 },
-      { ref: logo2Ref, start: 0.5 },
-      { ref: logo3Ref, start: 1 },
-    ];
+    const ctx = gsap.context(() => {
+      // LEFT CURVE LOGOS
+      const leftLogos = [
+        { ref: logo1Ref, start: 0 },
+        { ref: logo2Ref, start: 0.5 },
+        { ref: logo3Ref, start: 1 },
+      ];
 
-    leftLogos.forEach(({ ref, start }) => {
-      if (!ref.current) return;
+      leftLogos.forEach(({ ref, start }) => {
+        if (!ref.current) return;
+        gsap.to(ref.current, {
+          duration: 15,
+          repeat: -1,
+          ease: "none",
+          motionPath: {
+            path: "#leftCurve",
+            align: "#leftCurve",
+            alignOrigin: [0.5, 0.5],
+            start,
+            end: start + 1,
+            autoRotate: false,
+          },
+        });
+      });
 
-      gsap.to(ref.current, {
-        duration: 15,
-        repeat: -1,
-        ease: "none",
-        motionPath: {
-          path: "#leftCurve",
-          align: "#leftCurve",
-          alignOrigin: [0.5, 0.5],
-          start,
-          end: start + 1,
-          autoRotate: false,
-        },
+      // RIGHT CURVE LOGOS
+      const rightLogos = [
+        { ref: rightLogo1Ref, start: 0 },
+        { ref: rightLogo2Ref, start: 0.5 },
+        { ref: rightLogo3Ref, start: 1 },
+      ];
+
+      rightLogos.forEach(({ ref, start }) => {
+        if (!ref.current) return;
+        gsap.to(ref.current, {
+          duration: 15,
+          repeat: -1,
+          ease: "none",
+          motionPath: {
+            path: "#rightCurve",
+            align: "#rightCurve",
+            alignOrigin: [0.5, 0.5],
+            start,
+            end: start + 1,
+            autoRotate: false,
+          },
+        });
       });
     });
 
-    // RIGHT CURVE
-    const rightLogos = [
-      { ref: rightLogo1Ref, start: 0 },
-      { ref: rightLogo2Ref, start: 0.5 },
-      { ref: rightLogo3Ref, start: 1 },
-    ];
-
-    rightLogos.forEach(({ ref, start }) => {
-      if (!ref.current) return;
-
-      gsap.to(ref.current, {
-        duration: 15,
-        repeat: -1,
-        ease: "none",
-        motionPath: {
-          path: "#rightCurve",
-          align: "#rightCurve",
-          alignOrigin: [0.5, 0.5],
-          start,
-          end: start + 1,
-          autoRotate: false,
-        },
-      });
-    });
+    return () => ctx.revert();
   }, []);
+
   const duplicatedServices = [...services, ...services, ...services, ...services];
 
-  // Smooth Scroll Handler to Section 4 (Services)
-  const scrollToServices = () => {
-    const servicesSection = document.getElementById('services');
-    if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const [isSection3Toggled, setIsSection3Toggled] = useState(false)
-
   const counters = ["+52", "+84", "+116"];
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCounterIndex((prev) => (prev + 1) % COUNTERS.length);
+      setCounterIndex((prev) => (prev + 1) % counters.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [counters.length]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveProject((prev) => (prev + 1) % projects.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCounterIndex((prevIndex) => (prevIndex + 1) % counters.length);
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -417,7 +404,6 @@ export default function TechSolLandingPage() {
     setCurrentIndex((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
   };
 
-  // Place this right above TechSolLandingPage component
   const variants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 300 : -300,
@@ -433,21 +419,21 @@ export default function TechSolLandingPage() {
     }),
   };
 
-  // Calculate the two current cards for side-by-side display
   const firstCard = REVIEWS[currentIndex];
   const secondCard = REVIEWS[(currentIndex + 1) % REVIEWS.length];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      handleNext();
-    }, 5000);
+      setDirection(1);
+      setCurrentIndex((prev) => (prev + 1) % REVIEWS.length);
+    }, 6000);
     return () => clearInterval(timer);
-  }, [currentIndex]);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentFrameworkIdx((prev) => (prev + 1) % frameworkSteps.length);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
@@ -456,13 +442,8 @@ export default function TechSolLandingPage() {
       autoRaf: true,
       duration: 1.2,
       smoothWheel: true,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
     });
-
-    //-----gsap-----//
-
-
-
 
     return () => {
       lenis.destroy();
@@ -482,85 +463,88 @@ export default function TechSolLandingPage() {
           alt="Background"
           fill
           priority
+          sizes="100vw"
           className="object-fill object-center -z-0"
         />
 
-        //-----gsap-----//
+        {/* SVG MOTION PATHS */}
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-50"
-          viewBox="0 0 1440 900"
+          className="absolute inset-0 w-full h-full pointer-events-none z-20"
+          viewBox="0 0 1000 1000"
+          preserveAspectRatio="none"
         >
           <path
             id="leftCurve"
-            d="M190 -80 C450 140 210 910 80 890"
+            d="M 120 -50 C 220 300 180 700 80 1050"
             fill="none"
             stroke="transparent"
             strokeWidth="4"
-            strokeLinecap="round"
           />
           <path
             id="rightCurve"
-            d="M1240 -70 C990 140 1240 900 1360 890"
+            d="M 880 -50 C 780 300 820 700 920 1050"
             fill="none"
             stroke="transparent"
             strokeWidth="4"
           />
         </svg>
-        <motion.div>
+
+        {/* FLOATING LOGO ICONS (FOLLOWING SIDE CURVES) */}
+        <div className="absolute inset-0 pointer-events-none z-20">
           <Image
             ref={logo1Ref}
             src="/A.jpeg"
-            alt="Logo"
+            alt="Brand Asset 1"
             width={80}
             height={80}
-            className="absolute rounded-2xl overflow-hidden object-cover"
+            className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
           <Image
             ref={logo2Ref}
             src="/B..png"
-            alt="Logo"
+            alt="Brand Asset 2"
             width={80}
             height={80}
-            className="absolute rounded-2xl overflow-hidden object-cover"
+            className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
           <Image
             ref={logo3Ref}
             src="/C.png"
-            alt="Logo"
+            alt="Brand Asset 3"
             width={80}
             height={80}
-            className="absolute rounded-2xl overflow-hidden object-cover"
+            className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
           <Image
             ref={rightLogo1Ref}
             src="/D.png"
-            alt="Logo"
+            alt="Brand Asset 4"
             width={80}
             height={80}
-            className="absolute rounded-2xl overflow-hidden object-cover"
+            className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
           <Image
             ref={rightLogo2Ref}
             src="/E.png"
-            alt="Logo"
+            alt="Brand Asset 5"
             width={80}
             height={80}
-            className="absolute rounded-2xl overflow-hidden object-cover"
+            className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
           <Image
             ref={rightLogo3Ref}
             src="/F.png"
-            alt="Logo"
+            alt="Brand Asset 6"
             width={80}
             height={80}
-            className="absolute rounded-2xl overflow-hidden object-cover"
+            className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
-        </motion.div>
+        </div>
         {/* Adjusted pt-36 to clear space for floating navbar */}
         <main className="relative z-10 max-w-5xl mx-auto text-center px-6 pt-36 pb-24 flex flex-col items-center justify-center min-h-screen overflow-hidden">
 
@@ -727,99 +711,159 @@ export default function TechSolLandingPage() {
       </section>
 
       {/* ================= SECTION 2: PROJECTS SHOWCASE ================= */}
-      <section id="projects-section" className="relative py-24 w-full overflow-hidden select-none border-t border-neutral-200/50 bg-[#F5F5F5]">
+      <section id="projects-section" className="relative w-full overflow-hidden select-none border-t border-neutral-200/50 bg-[#F5F5F5]">
 
-        {/* UPPER SLIDER ROW */}
-        <div className="w-full flex overflow-hidden relative py-4 z-10">
-          <motion.div
-            className="flex gap-6 whitespace-nowrap flex-nowrap"
-            animate={{ x: ["-33.33%", "0%"] }}
-            transition={{
-              ease: "linear",
-              duration: 60, // Increased duration for a slower, smoother scroll
-              repeat: Infinity,
-            }}
-          >
-            {ROW_1_IMAGES.map((imagePath, idx) => (
+        {/* MOBILE VIEW (< md): 3x4 Grid + Bottom Card (Matches Framer Mobile View) */}
+        <div className="block md:hidden py-12 px-4 sm:px-6">
+          {/* 3-Column Thumbnails Grid */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3.5 max-w-md mx-auto">
+            {SECTION_2_IMAGES.slice(0, 12).map((imagePath, idx) => (
               <div
-                key={`row1-img-${idx}`}
-                className="relative w-[320px] sm:w-[380px] md:w-[440px] h-[220px] sm:h-[260px] md:h-[300px] flex-shrink-0 rounded-[24px] border border-neutral-300/40 overflow-hidden shadow-[0_12px_24px_rgba(0,0,0,0.02)] bg-white"
+                key={`mobile-grid-img-${idx}`}
+                className="relative aspect-[4/3] rounded-xl sm:rounded-2xl border border-neutral-300/50 overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.03)] bg-white"
               >
                 <Image
                   src={imagePath}
                   alt={`Project screenshot ${idx + 1}`}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 380px, 440px"
+                  sizes="33vw"
                 />
               </div>
             ))}
-          </motion.div>
-        </div>
+          </div>
 
-        {/* LOWER SLIDER ROW */}
-        <div className="w-full flex overflow-hidden relative py-4 mt-6 z-10">
+          {/* Bottom Card */}
           <motion.div
-            className="flex gap-6 whitespace-nowrap flex-nowrap"
-            animate={{ x: ["0%", "-33.33%"] }}
-            transition={{
-              ease: "linear",
-              duration: 60, // Increased duration for a slower, smoother scroll
-              repeat: Infinity,
-            }}
+            className="mt-6 max-w-md mx-auto rounded-3xl bg-white border border-neutral-200/80 p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-[0_4px_24px_rgba(0,0,0,0.03)]"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            viewport={{ once: true, amount: 0.2 }}
           >
-            {ROW_2_IMAGES.map((imagePath, idx) => (
-              <div
-                key={`row2-img-${idx}`}
-                className="relative w-[320px] sm:w-[380px] md:w-[440px] h-[220px] sm:h-[260px] md:h-[300px] flex-shrink-0 rounded-[24px] border border-neutral-300/40 overflow-hidden shadow-[0_12px_24px_rgba(0,0,0,0.02)] bg-white"
-              >
+            {/* Logo Icon Badge */}
+            <div className="mb-4 p-2.5 bg-white rounded-xl border border-neutral-200/60 shadow-sm flex items-center justify-center w-12 h-12">
+              <div className="relative w-7 h-7 flex-shrink-0">
                 <Image
-                  src={imagePath}
-                  alt={`Project screenshot ${idx + 1}`}
+                  src="/logo.png"
+                  alt="Logo"
                   fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 380px, 440px"
+                  sizes="28px"
+                  className="object-contain"
                 />
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* CENTRAL BADGE DIALOG OVERLAY */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
-          initial={{ opacity: 0, scale: 0.8, y: 40 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{
-            duration: 0.7,
-            ease: "easeOut",
-          }}
-          viewport={{
-            once: true,
-            amount: 0.3,
-          }}
-        >
-          <div className="relative w-[400px] h-[400px] rounded-full bg-white/95 backdrop-blur-md flex flex-col items-center justify-center text-center p-8 border border-neutral-200/40 shadow-[0_24px_60px_rgba(0,0,0,0.08),_0_0_0_8px_rgba(255,255,255,0.4)] transition-all pointer-events-auto">
-
-            <div className="mb-6 p-3 bg-white rounded-xl border border-neutral-200/50 shadow-sm flex items-center justify-center w-12 h-12">
-              <div className="relative w-6 h-6 flex-shrink-0">
-                <div className="absolute inset-0 bg-[#1D3B80] rounded-[4px_6px_4px_8px] transform -rotate-12 opacity-90"></div>
-                <div className="absolute inset-0 bg-[#E05300] rounded-[6px_4px_8px_4px] transform rotate-12 mix-blend-multiply opacity-90 translate-x-1"></div>
               </div>
             </div>
 
-            <h3 className="text-[38px] font-black tracking-tight text-[#0A0A0A] leading-[1.1] mb-8">
-              100+ Premium<br />Designs
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-[#060612] mb-5">
+              100+ Premium Designs
             </h3>
 
-            <Link href="/projects">
-              <button className="bg-[#FF5500] text-white text-[15px] font-bold tracking-tight px-8 py-4 rounded-[14px] hover:bg-orange-600 active:scale-[0.98] transition-all duration-200 shadow-[0_4px_14px_rgba(255,85,0,0.4),_inset_0_-2px_0_rgba(0,0,0,0.1)] cursor-pointer">
+            <Link href="/projects" className="w-full flex justify-center">
+              <button className="w-full max-w-[260px] bg-[#ff6321] text-white text-sm font-semibold tracking-tight px-6 py-3.5 rounded-xl hover:bg-[#e05300] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_14px_rgba(255,99,33,0.35)] cursor-pointer">
                 Explore all Projects
               </button>
             </Link>
+          </motion.div>
+        </div>
 
+        {/* DESKTOP VIEW (>= md): Infinite Scrolling Sliders + Refined Central Circle Badge */}
+        <div className="hidden md:block relative py-24">
+          {/* UPPER SLIDER ROW */}
+          <div className="w-full flex overflow-hidden relative py-4 z-10">
+            <motion.div
+              className="flex gap-6 whitespace-nowrap flex-nowrap"
+              animate={{ x: ["-33.33%", "0%"] }}
+              transition={{
+                ease: "linear",
+                duration: 60,
+                repeat: Infinity,
+              }}
+            >
+              {ROW_1_IMAGES.map((imagePath, idx) => (
+                <div
+                  key={`row1-img-${idx}`}
+                  className="relative w-[380px] lg:w-[440px] h-[260px] lg:h-[300px] flex-shrink-0 rounded-[24px] border border-neutral-300/40 overflow-hidden shadow-[0_12px_24px_rgba(0,0,0,0.02)] bg-white"
+                >
+                  <Image
+                    src={imagePath}
+                    alt={`Project screenshot ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="440px"
+                  />
+                </div>
+              ))}
+            </motion.div>
           </div>
-        </motion.div>
+
+          {/* LOWER SLIDER ROW */}
+          <div className="w-full flex overflow-hidden relative py-4 mt-6 z-10">
+            <motion.div
+              className="flex gap-6 whitespace-nowrap flex-nowrap"
+              animate={{ x: ["0%", "-33.33%"] }}
+              transition={{
+                ease: "linear",
+                duration: 60,
+                repeat: Infinity,
+              }}
+            >
+              {ROW_2_IMAGES.map((imagePath, idx) => (
+                <div
+                  key={`row2-img-${idx}`}
+                  className="relative w-[380px] lg:w-[440px] h-[260px] lg:h-[300px] flex-shrink-0 rounded-[24px] border border-neutral-300/40 overflow-hidden shadow-[0_12px_24px_rgba(0,0,0,0.02)] bg-white"
+                >
+                  <Image
+                    src={imagePath}
+                    alt={`Project screenshot ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="440px"
+                  />
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* CENTRAL BADGE DIALOG OVERLAY (Compact & Refined) */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+            initial={{ opacity: 0, scale: 0.85, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              duration: 0.6,
+              ease: "easeOut",
+            }}
+            viewport={{
+              once: true,
+              amount: 0.3,
+            }}
+          >
+            <div className="relative w-[300px] h-[300px] rounded-full bg-white/95 backdrop-blur-md flex flex-col items-center justify-center text-center p-6 border border-neutral-200/60 shadow-[0_20px_50px_rgba(0,0,0,0.08),_0_0_0_6px_rgba(255,255,255,0.6)] transition-all pointer-events-auto">
+              {/* Logo Icon Badge */}
+              <div className="mb-3 p-2.5 bg-white rounded-xl border border-neutral-200/50 shadow-sm flex items-center justify-center w-11 h-11">
+                <div className="relative w-6 h-6 flex-shrink-0">
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    fill
+                    sizes="24px"
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+
+              <h3 className="text-[24px] font-bold tracking-tight text-[#060612] leading-[1.15] mb-5">
+                100+ Premium<br />Designs
+              </h3>
+
+              <Link href="/projects">
+                <button className="bg-[#ff6321] text-white text-sm font-semibold tracking-tight px-7 py-3 rounded-xl hover:bg-[#e05300] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_14px_rgba(255,99,33,0.35)] cursor-pointer">
+                  Explore all Projects
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
 
       </section>
 
@@ -1336,10 +1380,12 @@ export default function TechSolLandingPage() {
                       </div>
 
                       <div className="flex-1 w-full h-[320px] sm:h-[400px] rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/40 relative">
-                        <img
+                        <Image
                           src={proj.img}
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-[1.03]"
                           alt={`${proj.title} showcase visual representation`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 500px"
+                          className="object-cover transition-transform duration-700 hover:scale-[1.03]"
                         />
                       </div>
                     </div>
@@ -1366,177 +1412,165 @@ export default function TechSolLandingPage() {
       </motion.section>
 
       {/* ================= SECTION 6: FRAMEWORK ================= */}
-      `<section className="w-full relative z-10 bg-[#F5F5F5] py-24 px-6 overflow-hidden font-sans antialiased">
-        <motion.div className="max-w-5xl mx-auto flex flex-col items-center text-center"
-          initial={{ opacity: 0, y: 60, scale: 0.96 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 100,
-            damping: 16,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.2,
-          }}>
+      <section className="w-full relative z-10 bg-[#F5F5F5] py-20 sm:py-24 px-4 sm:px-6 overflow-hidden font-sans antialiased">
+        <motion.div className="max-w-3xl mx-auto flex flex-col items-center text-center"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true, amount: 0.2 }}>
 
           {/* HEADER */}
           <div className="inline-flex items-center gap-1.5 text-neutral-400 text-xs font-bold tracking-[0.2em] uppercase mb-4">
             <span>⁘ PROCESS ⁘</span>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl md:text-[56px] font-black tracking-[-0.03em] leading-[1.1] text-[#060612] max-w-2xl">
+          <h2 className="text-3xl sm:text-4xl md:text-[46px] font-black tracking-[-0.03em] leading-[1.15] text-[#060612] max-w-2xl px-2">
             The <span className="text-[#FF5500]">TechSol Media</span> Framework
           </h2>
 
-          <p className="text-[#69686E] text-sm sm:text-base mt-4 max-w-xl font-normal leading-relaxed">
+          <p className="text-[#69686E] text-sm sm:text-base mt-3 max-w-lg font-normal leading-relaxed px-4">
             Our structured approach to building brands, websites, applications, and growth campaigns.
           </p>
 
-          {/* ARC WRAPPER - STRETCHES ACROSS THE PAGE */}
-          <motion.div
-            className="w-full relative flex justify-center h-[120px] sm:h-[150px] mt-10 overflow-visible"
-            initial={{ opacity: 0, y: 60, scale: 0.96 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              type: "spring",
-              stiffness: 100,
-              damping: 16,
-            }}
-            viewport={{
-              once: true,
-              amount: 0.2,
-            }}
-          >
+          {/* REVOLVING ARC & STEP NODES CONTAINER */}
+          <div className="w-full relative flex justify-center h-[90px] sm:h-[110px] mt-8 sm:mt-10 overflow-visible">
 
-            {/* FULL VIEWPORT CURVED ARCH BORDER (START TO END OF SCREEN) */}
+            {/* CURVED ARCH BORDER LINE */}
             <div
-              className="absolute top-[60px] w-[105vw] max-w-[1300px] aspect-[2/1] rounded-t-full border-[6px] border-white/90 shadow-[0_-10px_35px_rgba(255,255,255,0.8),inset_0_2px_10px_rgba(0,0,0,0.02)] pointer-events-none z-0 left-1/2 -translate-x-1/2 backdrop-blur-[1px]"
+              className="absolute top-[35px] sm:top-[42px] w-[340px] sm:w-[480px] md:w-[620px] aspect-[2/1] rounded-t-full border-[3.5px] sm:border-[4.5px] border-white shadow-[0_-6px_25px_rgba(255,255,255,0.9),inset_0_2px_8px_rgba(0,0,0,0.02)] pointer-events-none z-0 left-1/2 -translate-x-1/2"
               style={{
                 WebkitMaskImage:
-                  "linear-gradient(to bottom, black 0%, black 65%, transparent 100%)",
+                  "linear-gradient(to bottom, black 0%, black 75%, transparent 100%)",
                 maskImage:
-                  "linear-gradient(to bottom, black 0%, black 65%, transparent 100%)",
+                  "linear-gradient(to bottom, black 0%, black 75%, transparent 100%)",
               }}
             />
-            {/* ROTATING STEP NODES CONTAINER */}
-            <div className="absolute top-[60px] w-[110vw] max-w-[1400px] aspect-[2/1] z-10 left-1/2 -translate-x-1/2">
+
+            {/* REVOLVING STEP NODE ON THE RING (ONLY 1 ACTIVE STEP AT A TIME) */}
+            <div className="absolute top-[35px] sm:top-[42px] w-[340px] sm:w-[480px] md:w-[620px] aspect-[2/1] z-10 left-1/2 -translate-x-1/2 pointer-events-none">
               {frameworkSteps.map((step, idx) => {
                 const relativeIndex = idx - currentFrameworkIdx;
                 const isActive = idx === currentFrameworkIdx;
-                let angle = relativeIndex * 32;
+                const angle = relativeIndex * 42;
 
                 return (
                   <motion.div
-                    key={step.num || idx}
+                    key={step.num}
                     className="absolute pointer-events-auto origin-bottom bottom-0 left-1/2 -translate-x-1/2"
                     style={{
                       height: "100%",
                       transformOrigin: "50% 100%"
                     }}
-                    animate={{ rotate: angle }}
-                    transition={{ type: "spring", stiffness: 70, damping: 16 }}
+                    animate={{
+                      rotate: angle,
+                      opacity: isActive ? 1 : 0,
+                      pointerEvents: isActive ? "auto" : "none"
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 70,
+                      damping: 16,
+                      mass: 0.8
+                    }}
                   >
                     <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
                       <motion.div
-                        animate={{ rotate: -angle }}
-                        transition={{ type: "spring", stiffness: 70, damping: 16 }}
+                        animate={{
+                          rotate: -angle,
+                          scale: isActive ? 1 : 0.6
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 70,
+                          damping: 16,
+                          mass: 0.8
+                        }}
                       >
-                        {isActive ? (
-                          <div className="flex flex-col items-center justify-center -mt-8 scale-105 transition-transform duration-300">
-                            <span className="text-[10px] font-bold tracking-widest text-[#69686E] uppercase mb-1">
-                              STEP
-                            </span>
-                            <button className="w-14 h-14 bg-[#FF5500] text-white font-black text-lg rounded-[14px] flex items-center justify-center shadow-[0_8px_24px_rgba(255,85,0,0.35)] border-2 border-white focus:outline-none cursor-pointer">
-                              {step.num}
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setCurrentFrameworkIdx(idx)}
-                            className="bg-white text-neutral-400 font-bold text-[14px] px-4 py-2 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-neutral-200/50 flex items-center justify-center transition-all duration-300 hover:text-[#060612] hover:scale-105 focus:outline-none cursor-pointer"
-                          >
+                        <div className="flex flex-col items-center justify-center -mt-7 sm:-mt-8 transition-transform duration-300">
+                          <span className="text-[10px] font-bold tracking-widest text-[#69686E] uppercase mb-1">
+                            STEP
+                          </span>
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#FF5500] text-white font-black text-base sm:text-lg rounded-2xl flex items-center justify-center shadow-[0_8px_25px_rgba(255,85,0,0.4)] border-2 border-white">
                             {step.num}
-                          </button>
-                        )}
+                          </div>
+                        </div>
                       </motion.div>
                     </div>
                   </motion.div>
                 );
               })}
             </div>
-          </motion.div>
+          </div>
 
-          {/* DETAILS CARD CONTAINER */}
-          <motion.div className="w-full max-w-xl bg-white rounded-[2rem] border border-neutral-200/60 p-8 sm:p-10 shadow-[0_10px_40px_rgba(0,0,0,0.02)] mt-4 relative z-20 flex flex-col items-center"
-            initial={{ opacity: 0, y: 60, scale: 0.96 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              type: "spring",
-              stiffness: 100,
-              damping: 16,
-            }}
-            viewport={{
-              once: true,
-              amount: 0.2,
-            }}>
-            <div className="w-full overflow-hidden relative min-h-[160px] flex items-center justify-center">
+          {/* DETAILS CONTENT (COMPLETELY TRANSPARENT / NO CARD BORDER OR BOX) */}
+          <div className="w-full max-w-xl mt-4 relative z-20 flex flex-col items-center mx-auto px-4">
+            <div className="w-full overflow-hidden relative min-h-[140px] flex items-center justify-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentFrameworkIdx}
-                  initial={{ opacity: 0, x: 45 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -45 }}
-                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                  className="w-full flex flex-col items-center"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="w-full flex flex-col items-center text-center"
                 >
-                  <h3 className="text-2xl sm:text-3xl font-black text-[#060612] tracking-tight">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[#060612] tracking-tight">
                     {frameworkSteps[currentFrameworkIdx]?.title}
                   </h3>
 
-                  <p className="text-[#69686E] text-sm sm:text-[15px] leading-relaxed mt-4 max-w-md font-normal text-center">
+                  <p className="text-[#69686E] text-sm leading-relaxed mt-3 max-w-md font-normal text-center">
                     {frameworkSteps[currentFrameworkIdx]?.desc}
                   </p>
 
-                  <div className="w-full border-b border-dashed border-neutral-200/80 my-6" />
+                  <div className="w-full max-w-md border-b border-dashed border-neutral-300/60 my-5" />
 
-                  <p className="text-[10px] font-black tracking-widest text-[#69686E] uppercase text-center">
+                  <p className="text-[10px] sm:text-[11px] font-bold tracking-widest text-[#69686E] uppercase text-center">
                     {frameworkSteps[currentFrameworkIdx]?.tags}
                   </p>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            {/* REDIRECT TO /contact */}
-            <Link href="/contact" className="w-full sm:w-auto mt-8">
-              <button className="bg-[#FF5500] text-white font-bold text-sm px-9 py-4 rounded-xl shadow-[0_6px_20px_rgba(255,85,0,0.25)] hover:bg-orange-600 transition-all duration-200 w-full sm:w-auto active:scale-95 cursor-pointer">
+            {/* REDIRECT TO /contact BUTTON */}
+            <Link href="/contact" className="mt-6 w-full max-w-[240px]">
+              <button className="w-full bg-[#FF5500] text-white font-semibold text-sm py-3.5 px-6 rounded-xl shadow-[0_4px_14px_rgba(255,85,0,0.35)] hover:bg-orange-600 transition-all duration-200 active:scale-[0.98] cursor-pointer">
                 Start your project
               </button>
             </Link>
 
-            {/* PAGINATION / DOT INDICATORS */}
-            <div className="mt-8 pt-6 border-t border-neutral-100 w-full flex items-center justify-between px-2">
-              <span className="text-[11px] font-black tracking-widest text-neutral-400">
+            {/* COUNTER (01 / 05) & PREV/NEXT CIRCULAR ARROW BUTTONS */}
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <span className="text-xs font-bold tracking-widest text-neutral-400">
                 0{currentFrameworkIdx + 1} / 05
               </span>
 
-              <div className="flex gap-1.5">
-                {frameworkSteps.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentFrameworkIdx(idx)}
-                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${idx === currentFrameworkIdx ? "w-6 bg-[#FF5500]" : "w-2 bg-neutral-200 hover:bg-neutral-300"
-                      }`}
-                    aria-label={`Jump to framework step ${idx + 1}`}
-                  />
-                ))}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setCurrentFrameworkIdx((prev) => (prev - 1 + frameworkSteps.length) % frameworkSteps.length)}
+                  className="w-10 h-10 rounded-full border border-neutral-300 bg-white/80 shadow-sm flex items-center justify-center text-neutral-700 hover:bg-white hover:border-black active:scale-95 transition-all cursor-pointer"
+                  aria-label="Previous step"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setCurrentFrameworkIdx((prev) => (prev + 1) % frameworkSteps.length)}
+                  className="w-10 h-10 rounded-full border border-neutral-300 bg-white/80 shadow-sm flex items-center justify-center text-neutral-700 hover:bg-white hover:border-black active:scale-95 transition-all cursor-pointer"
+                  aria-label="Next step"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
               </div>
             </div>
-          </motion.div>
+
+          </div>
 
         </motion.div>
       </section>
-      `
+
       {/* ================= SECTION 7: REVIEWS ================= */}
       <section className="relative w-full bg-[#F5F5F5] py-24 px-4 overflow-hidden select-none">
         <motion.div className="max-w-6xl mx-auto flex flex-col items-center"
@@ -1591,10 +1625,12 @@ export default function TechSolLandingPage() {
                       {/* Author Info & Star Ratings */}
                       <div className="flex items-center justify-between mt-8 pt-2">
                         <div className="flex items-center gap-3">
-                          <img
+                          <Image
                             src={review.avatar}
                             alt={review.name}
-                            className="w-9 h-9 rounded-full object-cover"
+                            width={36}
+                            height={36}
+                            className="w-9 h-9 rounded-full object-cover shrink-0"
                           />
                           <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0A0A0A]">
                             <span>{review.name}</span>
@@ -1822,35 +1858,65 @@ export default function TechSolLandingPage() {
               Follow us on
             </h6>
             <div className="flex items-center gap-2.5">
-              {['facebook', 'instagram', 'linkedin', 'twitter'].map((platform, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-9 h-9 bg-[#0A0A0A] text-white rounded-lg flex items-center justify-center hover:bg-[#FF5500] transition-colors"
-                >
-                  <span className="text-[13px] font-bold">
-                    {platform === 'facebook' && 'f'}
-                    {platform === 'instagram' && '📷'}
-                    {platform === 'linkedin' && 'in'}
-                    {platform === 'twitter' && '𝕏'}
-                  </span>
-                </a>
-              ))}
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="w-9 h-9 rounded-xl bg-[#1877F2] text-white flex items-center justify-center shadow-sm hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-sm hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="w-9 h-9 rounded-xl bg-[#0A66C2] text-white flex items-center justify-center shadow-sm hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+              </a>
+              <a
+                href="https://x.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X (Twitter)"
+                className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shadow-sm border border-neutral-800 hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
             </div>
           </div>
 
         </div>
 
         {/* Clean Baseboard Copyright Wrapper Component */}
-        <div className="max-w-[1000px] mx-auto mt-16 pt-6 border-t border-[#E5E3E1] flex flex-col sm:flex-row items-center justify-between text-[14px] font-semibold text-[#555555]">
+        <div className="max-w-[1000px] mx-auto mt-16 pt-6 pb-14 sm:pb-4 border-t border-[#E5E3E1] flex flex-col sm:flex-row items-center justify-between text-xs sm:text-[14px] font-medium sm:font-semibold text-[#555555] text-center sm:text-left gap-2 sm:gap-4">
           <p>© 2026 TechSol Media. All rights reserved</p>
           <p>
             Designed &amp; Developed by{" "}
             <a
               href="mailto:synergexai.official@gmail.com"
-              className="text-[#FF5500] hover:underline cursor-pointer"
+              className="text-[#FF5500] font-semibold hover:underline cursor-pointer"
             >
-              SynergexAI (synergexai.official@gmail.com)
+              SynergexAI
             </a>
           </p>
         </div>

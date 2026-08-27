@@ -39,6 +39,7 @@ export default function Navbar() {
                   sizes="112px"
                   className="object-contain object-left"
                   priority
+                  loading="eager"
                 />
               </div>
             </Link>
