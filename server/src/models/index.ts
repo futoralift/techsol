@@ -1,8 +1,8 @@
-export { default as User, IUser } from './User';
-export { default as Service, IService } from './Service';
-export { default as Project, IProject } from './Project';
-export { default as Testimonial, ITestimonial } from './Testimonial';
-export { default as Blog, IBlog } from './Blog';
-export { default as Contact, IContact } from './Contact';
-export { default as Newsletter, INewsletter } from './Newsletter';
-export { default as Media, IMedia } from './Media';
+export { default as User, type IUser } from './User';
+export { default as Service, type IService } from './Service';
+export { default as Project, type IProject } from './Project';
+export { default as Testimonial, type ITestimonial } from './Testimonial';
+export { default as Blog, type IBlog } from './Blog';
+export { default as Contact, type IContact } from './Contact';
+export { default as Newsletter, type INewsletter } from './Newsletter';
+export { default as Media, type IMedia } from './Media';
