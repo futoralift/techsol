@@ -117,8 +117,8 @@ export default function ProjectsShowcase() {
               transition={{ duration: 0.4 }}
               className="flex flex-col items-start w-full md:w-[360px] h-[590px] mx-auto group cursor-pointer"
             >
-              <div className="bg-white p-5 rounded-[16px] w-full h-[480px] relative overflow-hidden transition-all duration-300 group-hover:scale-[1.005] shadow-sm">
-                <div className="w-full h-full relative rounded-lg overflow-hidden bg-neutral-100">
+              <div className="bg-white p-5 rounded-[16px] w-full h-[480px] min-h-[480px] relative overflow-hidden transition-all duration-300 group-hover:scale-[1.005] shadow-sm flex flex-col">
+                <div className="w-full flex-1 min-h-[440px] relative rounded-lg overflow-hidden bg-neutral-100">
                   <Image
                     src={project.image}
                     alt={project.title}

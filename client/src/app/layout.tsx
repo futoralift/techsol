@@ -33,7 +33,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} min-h-screen overflow-y-auto`}
+      className={`${inter.variable} min-h-screen`}
     >
       <body className="min-h-screen flex flex-col antialiased relative">
         <ParticleCursor />

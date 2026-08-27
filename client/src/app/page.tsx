@@ -8,8 +8,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Lenis from "lenis";
 import { Caveat, Geist } from "next/font/google";
-import { motion, AnimatePresence } from "framer-motion";
-
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Variants } from "framer-motion";
 
 
@@ -18,8 +17,9 @@ import { Variants } from "framer-motion";
 import { useRef } from "react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(MotionPathPlugin);
+gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
 
 // --- Framer Motion Variants ---
 const containerStagger: Variants = {
@@ -422,18 +422,43 @@ export default function TechSolLandingPage() {
   const firstCard = REVIEWS[currentIndex];
   const secondCard = REVIEWS[(currentIndex + 1) % REVIEWS.length];
 
+  // Framework Section Ref for GSAP ScrollTrigger
+  const frameworkSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!frameworkSectionRef.current) return;
+
+      ScrollTrigger.create({
+        trigger: frameworkSectionRef.current,
+        start: "top top",
+        end: "+=2200",
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.5,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const stepIndex = Math.min(
+            frameworkSteps.length - 1,
+            Math.max(0, Math.floor(self.progress * frameworkSteps.length))
+          );
+          setCurrentFrameworkIdx(stepIndex);
+        },
+      });
+    }, frameworkSectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleFrameworkStepClick = (index: number) => {
+    setCurrentFrameworkIdx(index);
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % REVIEWS.length);
     }, 6000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentFrameworkIdx((prev) => (prev + 1) % frameworkSteps.length);
-    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
@@ -445,13 +470,15 @@ export default function TechSolLandingPage() {
       touchMultiplier: 1.5,
     });
 
+    lenis.on('scroll', ScrollTrigger.update);
+
     return () => {
       lenis.destroy();
     };
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#F5F5F5] text-[#0A0A0A] font-sans antialiased flex flex-col selection:bg-orange-500 selection:text-white">
+    <div className="relative min-h-screen w-full overflow-x-clip bg-[#F5F5F5] text-[#0A0A0A] font-sans antialiased flex flex-col selection:bg-orange-500 selection:text-white">
 
       {/* ================= HEADER NAVBAR ================= */}
       <section className="relative min-h-screen w-full overflow-hidden">
@@ -497,6 +524,7 @@ export default function TechSolLandingPage() {
             alt="Brand Asset 1"
             width={80}
             height={80}
+            loading="eager"
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
@@ -506,6 +534,7 @@ export default function TechSolLandingPage() {
             alt="Brand Asset 2"
             width={80}
             height={80}
+            loading="eager"
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
@@ -515,6 +544,7 @@ export default function TechSolLandingPage() {
             alt="Brand Asset 3"
             width={80}
             height={80}
+            loading="eager"
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
@@ -524,6 +554,7 @@ export default function TechSolLandingPage() {
             alt="Brand Asset 4"
             width={80}
             height={80}
+            loading="eager"
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
@@ -533,6 +564,7 @@ export default function TechSolLandingPage() {
             alt="Brand Asset 5"
             width={80}
             height={80}
+            loading="eager"
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
 
@@ -542,6 +574,7 @@ export default function TechSolLandingPage() {
             alt="Brand Asset 6"
             width={80}
             height={80}
+            loading="eager"
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
         </div>
@@ -1411,164 +1444,179 @@ export default function TechSolLandingPage() {
         </div>
       </motion.section>
 
-      {/* ================= SECTION 6: FRAMEWORK ================= */}
-      <section className="w-full relative z-10 bg-[#F5F5F5] py-20 sm:py-24 px-4 sm:px-6 overflow-hidden font-sans antialiased">
-        <motion.div className="max-w-3xl mx-auto flex flex-col items-center text-center"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true, amount: 0.2 }}>
+      {/* ================= SECTION 6: FRAMEWORK (GSAP SCROLLTRIGGER PINNED) ================= */}
+      <section
+        ref={frameworkSectionRef}
+        className="w-full min-h-screen flex flex-col items-center justify-center bg-[#F5F5F5] font-sans antialiased py-8 px-4 sm:px-6 relative overflow-hidden z-10"
+      >
+        <div className="max-w-3xl mx-auto flex flex-col items-center text-center w-full">
 
-          {/* HEADER */}
-          <div className="inline-flex items-center gap-1.5 text-neutral-400 text-xs font-bold tracking-[0.2em] uppercase mb-4">
-            <span>⁘ PROCESS ⁘</span>
-          </div>
+            {/* HEADER */}
+            <div className="inline-flex items-center gap-1.5 text-neutral-400 text-xs font-bold tracking-[0.2em] uppercase mb-2 sm:mb-3">
+              <span>⁘ PROCESS ⁘</span>
+            </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-[46px] font-black tracking-[-0.03em] leading-[1.15] text-[#060612] max-w-2xl px-2">
-            The <span className="text-[#FF5500]">TechSol Media</span> Framework
-          </h2>
+            <h2 className="text-2xl sm:text-4xl md:text-[44px] font-black tracking-[-0.03em] leading-[1.15] text-[#060612] max-w-2xl px-2">
+              The <span className="text-[#FF5500]">TechSol Media</span> Framework
+            </h2>
 
-          <p className="text-[#69686E] text-sm sm:text-base mt-3 max-w-lg font-normal leading-relaxed px-4">
-            Our structured approach to building brands, websites, applications, and growth campaigns.
-          </p>
+            <p className="text-[#69686E] text-xs sm:text-sm mt-1.5 sm:mt-2 max-w-lg font-normal leading-relaxed px-4">
+              Our structured approach to building brands, websites, applications, and growth campaigns.
+            </p>
 
-          {/* REVOLVING ARC & STEP NODES CONTAINER */}
-          <div className="w-full relative flex justify-center h-[90px] sm:h-[110px] mt-8 sm:mt-10 overflow-visible">
+            {/* BACKGROUND FAINT SPARKLES (DECORATIVE ACCENTS) */}
+            <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
+              <svg className="absolute left-[4%] sm:left-[8%] top-[20%] w-24 h-36 text-[#fba85b]/35 opacity-70" viewBox="0 0 100 150" fill="currentColor">
+                <path d="M20 10 L22 25 L37 27 L22 29 L20 44 L18 29 L3 27 L18 25 Z" />
+                <path d="M45 55 L46 64 L55 65 L46 66 L45 75 L44 66 L35 65 L44 64 Z" opacity="0.6" />
+                <path d="M15 80 L16 87 L23 88 L16 89 L15 96 L14 89 L7 88 L14 87 Z" opacity="0.4" />
+                <path d="M30 110 L32 122 L44 124 L32 126 L30 138 L28 126 L16 124 L28 122 Z" opacity="0.5" />
+              </svg>
 
-            {/* CURVED ARCH BORDER LINE */}
-            <div
-              className="absolute top-[35px] sm:top-[42px] w-[340px] sm:w-[480px] md:w-[620px] aspect-[2/1] rounded-t-full border-[3.5px] sm:border-[4.5px] border-white shadow-[0_-6px_25px_rgba(255,255,255,0.9),inset_0_2px_8px_rgba(0,0,0,0.02)] pointer-events-none z-0 left-1/2 -translate-x-1/2"
-              style={{
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, black 0%, black 75%, transparent 100%)",
-                maskImage:
-                  "linear-gradient(to bottom, black 0%, black 75%, transparent 100%)",
-              }}
-            />
+              <svg className="absolute right-[4%] sm:right-[8%] top-[22%] w-24 h-36 text-[#fba85b]/35 opacity-70" viewBox="0 0 100 150" fill="currentColor">
+                <path d="M80 15 L78 28 L65 30 L78 32 L80 45 L82 32 L95 30 L82 28 Z" />
+                <path d="M55 60 L54 68 L46 69 L54 70 L55 78 L56 70 L64 69 L56 68 Z" opacity="0.6" />
+                <path d="M75 90 L74 97 L67 98 L74 99 L75 106 L76 99 L83 98 L76 97 Z" opacity="0.4" />
+              </svg>
+            </div>
 
-            {/* REVOLVING STEP NODE ON THE RING (ONLY 1 ACTIVE STEP AT A TIME) */}
-            <div className="absolute top-[35px] sm:top-[42px] w-[340px] sm:w-[480px] md:w-[620px] aspect-[2/1] z-10 left-1/2 -translate-x-1/2 pointer-events-none">
-              {frameworkSteps.map((step, idx) => {
-                const relativeIndex = idx - currentFrameworkIdx;
-                const isActive = idx === currentFrameworkIdx;
-                const angle = relativeIndex * 42;
+            {/* REVOLVING ARC & STEP NODES CONTAINER (SPREAD WIDE AT BOTTOM) */}
+            <div className="w-full relative flex justify-center h-[90px] sm:h-[120px] md:h-[135px] mt-4 sm:mt-6 overflow-visible">
 
-                return (
-                  <motion.div
-                    key={step.num}
-                    className="absolute pointer-events-auto origin-bottom bottom-0 left-1/2 -translate-x-1/2"
-                    style={{
-                      height: "100%",
-                      transformOrigin: "50% 100%"
-                    }}
-                    animate={{
-                      rotate: angle,
-                      opacity: isActive ? 1 : 0,
-                      pointerEvents: isActive ? "auto" : "none"
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 70,
-                      damping: 16,
-                      mass: 0.8
-                    }}
-                  >
-                    <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                      <motion.div
-                        animate={{
-                          rotate: -angle,
-                          scale: isActive ? 1 : 0.6
-                        }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 70,
-                          damping: 16,
-                          mass: 0.8
-                        }}
-                      >
-                        <div className="flex flex-col items-center justify-center -mt-7 sm:-mt-8 transition-transform duration-300">
-                          <span className="text-[10px] font-bold tracking-widest text-[#69686E] uppercase mb-1">
-                            STEP
-                          </span>
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#FF5500] text-white font-black text-base sm:text-lg rounded-2xl flex items-center justify-center shadow-[0_8px_25px_rgba(255,85,0,0.4)] border-2 border-white">
-                            {step.num}
+              {/* CURVED WIDE ARCH BORDER LINE WITH SPREAD */}
+              <div
+                className="absolute top-[28px] sm:top-[35px] md:top-[40px] w-[350px] sm:w-[620px] md:w-[860px] lg:w-[1040px] aspect-[2/1] rounded-t-full border-[3px] sm:border-[4.5px] border-white shadow-[0_-8px_30px_rgba(255,255,255,0.95),inset_0_2px_12px_rgba(0,0,0,0.015)] pointer-events-none z-0 left-1/2 -translate-x-1/2"
+                style={{
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, black 0%, black 80%, transparent 100%)",
+                  maskImage:
+                    "linear-gradient(to bottom, black 0%, black 80%, transparent 100%)",
+                }}
+              />
+
+              {/* REVOLVING STEP NODE ON THE RING (ONLY 1 ACTIVE STEP AT A TIME) */}
+              <div className="absolute top-[28px] sm:top-[35px] md:top-[40px] w-[350px] sm:w-[620px] md:w-[860px] lg:w-[1040px] aspect-[2/1] z-10 left-1/2 -translate-x-1/2 pointer-events-none">
+                {frameworkSteps.map((step, idx) => {
+                  const relativeIndex = idx - currentFrameworkIdx;
+                  const isActive = idx === currentFrameworkIdx;
+                  const angle = relativeIndex * 38;
+
+                  return (
+                    <motion.div
+                      key={step.num}
+                      className="absolute pointer-events-auto origin-bottom bottom-0 left-1/2 -translate-x-1/2"
+                      style={{
+                        height: "100%",
+                        transformOrigin: "50% 100%"
+                      }}
+                      animate={{
+                        rotate: angle,
+                        opacity: isActive ? 1 : 0,
+                        pointerEvents: isActive ? "auto" : "none"
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 70,
+                        damping: 16,
+                        mass: 0.8
+                      }}
+                    >
+                      <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                        <motion.div
+                          animate={{
+                            rotate: -angle,
+                            scale: isActive ? 1 : 0.6
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 70,
+                            damping: 16,
+                            mass: 0.8
+                          }}
+                        >
+                          <div className="flex flex-col items-center justify-center -mt-2 sm:-mt-3 transition-transform duration-300">
+                            <span className="text-[10px] font-bold tracking-widest text-[#69686E] uppercase mb-1">
+                              STEP
+                            </span>
+                            <div className="w-11 h-11 sm:w-14 sm:h-14 bg-[#FF5500] text-white font-black text-sm sm:text-lg rounded-2xl flex items-center justify-center shadow-[0_8px_25px_rgba(255,85,0,0.4)] border-2 border-white">
+                              {step.num}
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* DETAILS CONTENT (COMPLETELY TRANSPARENT / NO CARD BORDER OR BOX) */}
-          <div className="w-full max-w-xl mt-4 relative z-20 flex flex-col items-center mx-auto px-4">
-            <div className="w-full overflow-hidden relative min-h-[140px] flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentFrameworkIdx}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="w-full flex flex-col items-center text-center"
-                >
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#060612] tracking-tight">
-                    {frameworkSteps[currentFrameworkIdx]?.title}
-                  </h3>
-
-                  <p className="text-[#69686E] text-sm leading-relaxed mt-3 max-w-md font-normal text-center">
-                    {frameworkSteps[currentFrameworkIdx]?.desc}
-                  </p>
-
-                  <div className="w-full max-w-md border-b border-dashed border-neutral-300/60 my-5" />
-
-                  <p className="text-[10px] sm:text-[11px] font-bold tracking-widest text-[#69686E] uppercase text-center">
-                    {frameworkSteps[currentFrameworkIdx]?.tags}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* REDIRECT TO /contact BUTTON */}
-            <Link href="/contact" className="mt-6 w-full max-w-[240px]">
-              <button className="w-full bg-[#FF5500] text-white font-semibold text-sm py-3.5 px-6 rounded-xl shadow-[0_4px_14px_rgba(255,85,0,0.35)] hover:bg-orange-600 transition-all duration-200 active:scale-[0.98] cursor-pointer">
-                Start your project
-              </button>
-            </Link>
-
-            {/* COUNTER (01 / 05) & PREV/NEXT CIRCULAR ARROW BUTTONS */}
-            <div className="mt-8 flex flex-col items-center gap-3">
-              <span className="text-xs font-bold tracking-widest text-neutral-400">
-                0{currentFrameworkIdx + 1} / 05
-              </span>
-
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setCurrentFrameworkIdx((prev) => (prev - 1 + frameworkSteps.length) % frameworkSteps.length)}
-                  className="w-10 h-10 rounded-full border border-neutral-300 bg-white/80 shadow-sm flex items-center justify-center text-neutral-700 hover:bg-white hover:border-black active:scale-95 transition-all cursor-pointer"
-                  aria-label="Previous step"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setCurrentFrameworkIdx((prev) => (prev + 1) % frameworkSteps.length)}
-                  className="w-10 h-10 rounded-full border border-neutral-300 bg-white/80 shadow-sm flex items-center justify-center text-neutral-700 hover:bg-white hover:border-black active:scale-95 transition-all cursor-pointer"
-                  aria-label="Next step"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
 
-          </div>
+            {/* DETAILS CONTENT (COMPLETELY TRANSPARENT / NO CARD BORDER OR BOX) */}
+            <div className="w-full max-w-xl mt-3 sm:mt-4 relative z-20 flex flex-col items-center mx-auto px-4">
+              <div className="w-full overflow-hidden relative min-h-[125px] sm:min-h-[140px] flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentFrameworkIdx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="w-full flex flex-col items-center text-center"
+                  >
+                    <h3 className="text-xl sm:text-3xl font-bold text-[#060612] tracking-tight">
+                      {frameworkSteps[currentFrameworkIdx]?.title}
+                    </h3>
 
-        </motion.div>
+                    <p className="text-[#69686E] text-xs sm:text-sm leading-relaxed mt-2 sm:mt-3 max-w-md font-normal text-center">
+                      {frameworkSteps[currentFrameworkIdx]?.desc}
+                    </p>
+
+                    <div className="w-full max-w-md border-b border-dashed border-neutral-300/60 my-3.5 sm:my-5" />
+
+                    <p className="text-[10px] sm:text-[11px] font-bold tracking-widest text-[#69686E] uppercase text-center">
+                      {frameworkSteps[currentFrameworkIdx]?.tags}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* REDIRECT TO /contact BUTTON */}
+              <Link href="/contact" className="mt-4 sm:mt-6 w-full max-w-[240px]">
+                <button className="w-full bg-[#FF5500] text-white font-semibold text-xs sm:text-sm py-3 sm:py-3.5 px-6 rounded-xl shadow-[0_4px_14px_rgba(255,85,0,0.35)] hover:bg-orange-600 transition-all duration-200 active:scale-[0.98] cursor-pointer">
+                  Start your project
+                </button>
+              </Link>
+
+              {/* COUNTER (01 / 05) & PREV/NEXT CIRCULAR ARROW BUTTONS (MOBILE ONLY) */}
+              <div className="mt-5 sm:mt-7 flex md:hidden flex-col items-center gap-2.5">
+                <span className="text-xs font-bold tracking-widest text-neutral-400">
+                  0{currentFrameworkIdx + 1} / 05
+                </span>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleFrameworkStepClick((currentFrameworkIdx - 1 + frameworkSteps.length) % frameworkSteps.length)}
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-neutral-300 bg-white/80 shadow-sm flex items-center justify-center text-neutral-700 hover:bg-white hover:border-black active:scale-95 transition-all cursor-pointer"
+                    aria-label="Previous step"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleFrameworkStepClick((currentFrameworkIdx + 1) % frameworkSteps.length)}
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-neutral-300 bg-white/80 shadow-sm flex items-center justify-center text-neutral-700 hover:bg-white hover:border-black active:scale-95 transition-all cursor-pointer"
+                    aria-label="Next step"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
       </section>
 
       {/* ================= SECTION 7: REVIEWS ================= */}
