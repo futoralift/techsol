@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   },
   description:
     "TechSol Media is a premium digital agency crafting bold brands, stunning websites, and growth-driven marketing experiences.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
