@@ -314,7 +314,7 @@ export default function TechSolLandingPage() {
   const [direction, setDirection] = useState(1);
   const [isSection3Toggled, setIsSection3Toggled] = useState(false);
 
-  // GSAP Refs
+  // GSAP Refs - Desktop
   const logo1Ref = useRef(null);
   const logo2Ref = useRef(null);
   const logo3Ref = useRef(null);
@@ -322,8 +322,19 @@ export default function TechSolLandingPage() {
   const rightLogo2Ref = useRef(null);
   const rightLogo3Ref = useRef(null);
 
+  // GSAP Refs - Mobile
+  const mLogo1Ref = useRef(null);
+  const mLogo2Ref = useRef(null);
+  const mLogo3Ref = useRef(null);
+  const mRightLogo1Ref = useRef(null);
+  const mRightLogo2Ref = useRef(null);
+  const mRightLogo3Ref = useRef(null);
+
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    // DESKTOP ANIMATIONS (>= 768px) - Exact original behavior
+    mm.add("(min-width: 768px)", () => {
       // LEFT CURVE LOGOS
       const leftLogos = [
         { ref: logo1Ref, start: 0 },
@@ -373,7 +384,56 @@ export default function TechSolLandingPage() {
       });
     });
 
-    return () => ctx.revert();
+    // MOBILE ANIMATIONS (< 768px) - Inside Curved Lines MotionPath
+    mm.add("(max-width: 767px)", () => {
+      // Left side mobile icons (all moving along the INSIDE left curve)
+      const mobileLeftLogos = [
+        { ref: mLogo1Ref, path: "#mobileLeftPath1", progress: 0.0, duration: 15 },
+        { ref: mLogo2Ref, path: "#mobileLeftPath1", progress: 0.333, duration: 15 },
+        { ref: mLogo3Ref, path: "#mobileLeftPath1", progress: 0.666, duration: 15 },
+      ];
+
+      mobileLeftLogos.forEach(({ ref, path, progress, duration }) => {
+        if (!ref.current) return;
+        const tween = gsap.to(ref.current, {
+          duration,
+          repeat: -1,
+          ease: "none",
+          motionPath: {
+            path,
+            align: path,
+            alignOrigin: [0.5, 0.5],
+            autoRotate: false,
+          },
+        });
+        tween.progress(progress);
+      });
+
+      // Right side mobile icons (all moving along the INSIDE right curve)
+      const mobileRightLogos = [
+        { ref: mRightLogo1Ref, path: "#mobileRightPath1", progress: 0.166, duration: 15 },
+        { ref: mRightLogo2Ref, path: "#mobileRightPath1", progress: 0.5, duration: 15 },
+        { ref: mRightLogo3Ref, path: "#mobileRightPath1", progress: 0.833, duration: 15 },
+      ];
+
+      mobileRightLogos.forEach(({ ref, path, progress, duration }) => {
+        if (!ref.current) return;
+        const tween = gsap.to(ref.current, {
+          duration,
+          repeat: -1,
+          ease: "none",
+          motionPath: {
+            path,
+            align: path,
+            alignOrigin: [0.5, 0.5],
+            autoRotate: false,
+          },
+        });
+        tween.progress(progress);
+      });
+    });
+
+    return () => mm.revert();
   }, []);
 
   const duplicatedServices = [...services, ...services, ...services, ...services];
@@ -485,18 +545,29 @@ export default function TechSolLandingPage() {
 
         {/* ================= SECTION 1: HERO CONTENT ================= */}
 
+        {/* DESKTOP BACKGROUND IMAGE */}
         <Image
           src="/backgroundimg.png"
-          alt="Background"
+          alt="Desktop Background"
           fill
           priority
           sizes="100vw"
-          className="object-fill object-center -z-0"
+          className="hidden md:block object-fill object-center -z-0"
         />
 
-        {/* SVG MOTION PATHS */}
+        {/* MOBILE BACKGROUND IMAGE (9:16 CURVED-LINE REFERENCE) */}
+        <Image
+          src="/mobile-hero-bg.jpg"
+          alt="Mobile Background"
+          fill
+          priority
+          sizes="100vw"
+          className="block md:hidden object-cover object-center -z-0"
+        />
+
+        {/* DESKTOP SVG MOTION PATHS */}
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-20"
+          className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-20"
           viewBox="0 0 1000 1000"
           preserveAspectRatio="none"
         >
@@ -516,8 +587,30 @@ export default function TechSolLandingPage() {
           />
         </svg>
 
-        {/* FLOATING LOGO ICONS (FOLLOWING SIDE CURVES) */}
-        <div className="absolute inset-0 pointer-events-none z-20">
+        {/* MOBILE SVG MOTION PATHS (PRECISELY ALIGNED TO MOBILE INSIDE CURVES) */}
+        <svg
+          className="block md:hidden absolute inset-0 w-full h-full pointer-events-none z-20"
+          viewBox="0 0 576 1024"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <path
+            id="mobileLeftPath1"
+            d="M -16 -40 C 230 260, 230 764, -16 1064"
+            fill="none"
+            stroke="transparent"
+            strokeWidth="2"
+          />
+          <path
+            id="mobileRightPath1"
+            d="M 592 -40 C 346 260, 346 764, 592 1064"
+            fill="none"
+            stroke="transparent"
+            strokeWidth="2"
+          />
+        </svg>
+
+        {/* DESKTOP FLOATING LOGO ICONS (FOLLOWING DESKTOP SIDE CURVES) */}
+        <div className="hidden md:block absolute inset-0 pointer-events-none z-20">
           <Image
             ref={logo1Ref}
             src="/A.jpeg"
@@ -578,8 +671,71 @@ export default function TechSolLandingPage() {
             className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl overflow-hidden object-cover shadow-[0_8px_20px_rgba(0,0,0,0.06)] border border-white/80"
           />
         </div>
-        {/* Adjusted pt-36 to clear space for floating navbar */}
-        <main className="relative z-10 max-w-5xl mx-auto text-center px-6 pt-36 pb-24 flex flex-col items-center justify-center min-h-screen overflow-hidden">
+
+        {/* MOBILE FLOATING LOGO ICONS (FOLLOWING MOBILE INSIDE CURVED RAILS - LARGER SIZE) */}
+        <div className="block md:hidden absolute inset-0 pointer-events-none z-20">
+          <Image
+            ref={mLogo1Ref}
+            src="/A.jpeg"
+            alt="Brand Asset 1"
+            width={64}
+            height={64}
+            loading="eager"
+            className="absolute top-0 left-0 w-14 h-14 rounded-2xl overflow-hidden object-cover shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-2 border-white/95 bg-white"
+          />
+
+          <Image
+            ref={mLogo2Ref}
+            src="/B..png"
+            alt="Brand Asset 2"
+            width={64}
+            height={64}
+            loading="eager"
+            className="absolute top-0 left-0 w-14 h-14 rounded-2xl overflow-hidden object-cover shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-2 border-white/95 bg-white"
+          />
+
+          <Image
+            ref={mLogo3Ref}
+            src="/C.png"
+            alt="Brand Asset 3"
+            width={64}
+            height={64}
+            loading="eager"
+            className="absolute top-0 left-0 w-14 h-14 rounded-2xl overflow-hidden object-cover shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-2 border-white/95 bg-white"
+          />
+
+          <Image
+            ref={mRightLogo1Ref}
+            src="/D.png"
+            alt="Brand Asset 4"
+            width={64}
+            height={64}
+            loading="eager"
+            className="absolute top-0 left-0 w-14 h-14 rounded-2xl overflow-hidden object-cover shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-2 border-white/95 bg-white"
+          />
+
+          <Image
+            ref={mRightLogo2Ref}
+            src="/E.png"
+            alt="Brand Asset 5"
+            width={64}
+            height={64}
+            loading="eager"
+            className="absolute top-0 left-0 w-14 h-14 rounded-2xl overflow-hidden object-cover shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-2 border-white/95 bg-white"
+          />
+
+          <Image
+            ref={mRightLogo3Ref}
+            src="/F.png"
+            alt="Brand Asset 6"
+            width={64}
+            height={64}
+            loading="eager"
+            className="absolute top-0 left-0 w-14 h-14 rounded-2xl overflow-hidden object-cover shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-2 border-white/95 bg-white"
+          />
+        </div>
+        {/* Adjusted pt-24 on mobile / pt-36 on desktop to center content cleanly */}
+        <main className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 pt-24 pb-12 sm:pt-28 sm:pb-16 md:pt-36 md:pb-24 flex flex-col items-center justify-center min-h-screen overflow-hidden">
 
           {/* Digital Agency Tag */}
           <motion.div
@@ -587,7 +743,7 @@ export default function TechSolLandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            className="inline-flex items-center gap-1 border border-neutral-300/60 bg-white/60 px-3.5 py-1 rounded-full shadow-sm mb-6 z-10"
+            className="inline-flex items-center gap-1 border border-neutral-300/60 bg-white/60 px-3.5 py-1 rounded-full shadow-sm mb-4 sm:mb-6 z-10"
           >
             <span
               className="text-[10px] font-bold tracking-[0.25em] uppercase pl-1"
@@ -603,7 +759,7 @@ export default function TechSolLandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            className={`${geist.className} text-center text-[32px] sm:text-[48px] md:text-[54px] font-bold leading-[1.08] tracking-tight text-[#060612] max-w-4xl mx-auto mb-[32px] z-10`}
+            className={`${geist.className} text-center text-[29px] sm:text-[44px] md:text-[54px] font-bold leading-[1.12] sm:leading-[1.1] md:leading-[1.08] tracking-tight text-[#060612] max-w-[310px] sm:max-w-2xl md:max-w-4xl mx-auto mb-4 sm:mb-6 md:mb-[32px] z-10`}
             style={{
               fontFeatureSettings:
                 '"blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on',
@@ -619,7 +775,7 @@ export default function TechSolLandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            className="text-sm sm:text-base md:text-[16px] max-w-xl leading-[1.6] font-normal z-10"
+            className="text-xs sm:text-base md:text-[16px] max-w-[280px] sm:max-w-lg md:max-w-xl leading-[1.55] sm:leading-[1.6] font-normal z-10"
             style={{ color: "rgb(105, 104, 110)", textAlign: "center" }}
           >
             Strategic design, social media marketing, websites and digital solutions
@@ -628,7 +784,7 @@ export default function TechSolLandingPage() {
           </motion.p>
 
           {/* Action Buttons Row */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 relative pb-20 z-10">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 relative pb-14 sm:pb-20 z-10">
             {/* Column 1: Discuss Button */}
             <div className="relative">
               <motion.div
@@ -638,7 +794,7 @@ export default function TechSolLandingPage() {
                 variants={fadeInUp}
               >
                 <Link href="/contact" className="inline-block">
-                  <button className="bg-[#FF5500] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-[0_6px_20px_rgba(255,85,0,0.25)] hover:bg-orange-600 transition-all duration-200 whitespace-nowrap cursor-pointer">
+                  <button className="bg-[#FF5500] text-white font-bold text-sm px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-[0_6px_20px_rgba(255,85,0,0.25)] hover:bg-orange-600 transition-all duration-200 whitespace-nowrap cursor-pointer">
                     Discuss your ideas
                   </button>
                 </Link>
@@ -721,7 +877,7 @@ export default function TechSolLandingPage() {
               >
                 <button
                   type="button"
-                  className="bg-[#0A0A0A] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:bg-neutral-800 transition-all duration-200 whitespace-nowrap cursor-pointer"
+                  className="bg-[#0A0A0A] text-white font-bold text-sm px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:bg-neutral-800 transition-all duration-200 whitespace-nowrap cursor-pointer"
                 >
                   View services
                 </button>
@@ -735,7 +891,7 @@ export default function TechSolLandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            className="mt-12 text-[10px] sm:text-xs font-bold tracking-[0.18em] uppercase border-b border-dashed border-neutral-300/60 pb-8 w-full max-w-2xl z-10"
+            className="mt-6 sm:mt-12 text-[9px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.18em] uppercase border-b border-dashed border-neutral-300/60 pb-6 sm:pb-8 w-full max-w-2xl z-10"
             style={{ color: "rgb(105, 104, 110)", textAlign: "center" }}
           >
             5+ YEARS EXPERIENCE • 1000+ CREATIVES DELIVERED • 100+ CAMPAIGNS MANAGED
