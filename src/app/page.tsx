@@ -1,20 +1,11 @@
 "use client";
-import { FAQSection } from '@/components/FAQSection';
-
-
-import { Paintbrush, PenTool, Layout, Code } from "lucide-react";
+import { FAQSection } from "@/components/FAQSection";
 import Image from "next/image";
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Lenis from "lenis";
 import { Caveat, Geist } from "next/font/google";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { Variants } from "framer-motion";
-
-
-
-
-import { useRef } from "react";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -32,19 +23,6 @@ const containerStagger: Variants = {
     },
   },
 };
-
-
-
-import SvgArcs from "@/components/SvgArcs";
-import HeroBackground from "@/components/HeroBackground";
-import MotionPath from '@/components/MotionPath';
-
-
-
-
-
-
-
 
 // --- FONTS ---
 const caveat = Caveat({
@@ -245,10 +223,11 @@ const frameworkSteps = [
 
 
 const comparisons = [
-  { other: "Slow response times", us: "Instant communication" },
-  { other: "Hidden agency fees", us: "100% transparent pricing" },
-  { other: "Cookie-cutter templates", us: "Custom high-converting design" },
-  { other: "Unclear deliverables", us: "Clear roadmaps & updates" },
+  { other: "Delayed responses", us: "Fast communication" },
+  { other: "Unclear revisions", us: "Defined revision process" },
+  { other: "Generic designs", us: "Custom creative solutions" },
+  { other: "No clear workflow", us: "Structured project execution" },
+  { other: "One-time delivery", us: "Long-term support" },
 ];
 
 const COUNTERS = ["10+", "25+", "50+"];
@@ -304,7 +283,24 @@ const REVIEWS = [
   }
 ];
 
-// --- MAIN REACT COMPONENT ---
+const duplicatedServices = [...services, ...services, ...services, ...services];
+const counters = ["+52", "+84", "+116"];
+
+const reviewSlideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 300 : -300,
+    opacity: 0,
+  }),
+};
+
 // --- MAIN REACT COMPONENT ---
 export default function TechSolLandingPage() {
   const [activeProject, setActiveProject] = useState(0);
@@ -337,9 +333,9 @@ export default function TechSolLandingPage() {
     mm.add("(min-width: 768px)", () => {
       // LEFT CURVE LOGOS
       const leftLogos = [
-        { ref: logo1Ref, start: 0 },
-        { ref: logo2Ref, start: 0.5 },
-        { ref: logo3Ref, start: 1 },
+        { ref: logo1Ref, start: 0.1 },
+        { ref: logo2Ref, start: 0.433 },
+        { ref: logo3Ref, start: 0.766 },
       ];
 
       leftLogos.forEach(({ ref, start }) => {
@@ -359,11 +355,11 @@ export default function TechSolLandingPage() {
         });
       });
 
-      // RIGHT CURVE LOGOS
+      // RIGHT CURVE LOGOS (Synchronized with left)
       const rightLogos = [
-        { ref: rightLogo1Ref, start: 0 },
-        { ref: rightLogo2Ref, start: 0.5 },
-        { ref: rightLogo3Ref, start: 1 },
+        { ref: rightLogo1Ref, start: 0.1 },
+        { ref: rightLogo2Ref, start: 0.433 },
+        { ref: rightLogo3Ref, start: 0.766 },
       ];
 
       rightLogos.forEach(({ ref, start }) => {
@@ -384,13 +380,15 @@ export default function TechSolLandingPage() {
       });
     });
 
-    // MOBILE ANIMATIONS (< 768px) - Inside Curved Lines MotionPath
+    // MOBILE ANIMATIONS (< 768px) - Inside Curved Lines MotionPath (Slower speed, 3 icons on left & right in sync)
     mm.add("(max-width: 767px)", () => {
-      // Left side mobile icons (all moving along the INSIDE left curve)
+      const mobileDuration = 30; // Slower animation duration for mobile view only
+
+      // Left side mobile icons (all moving along the INSIDE left curve, spaced evenly by 1/3)
       const mobileLeftLogos = [
-        { ref: mLogo1Ref, path: "#mobileLeftPath1", progress: 0.0, duration: 15 },
-        { ref: mLogo2Ref, path: "#mobileLeftPath1", progress: 0.333, duration: 15 },
-        { ref: mLogo3Ref, path: "#mobileLeftPath1", progress: 0.666, duration: 15 },
+        { ref: mLogo1Ref, path: "#mobileLeftPath1", progress: 0.15, duration: mobileDuration },
+        { ref: mLogo2Ref, path: "#mobileLeftPath1", progress: 0.483, duration: mobileDuration },
+        { ref: mLogo3Ref, path: "#mobileLeftPath1", progress: 0.816, duration: mobileDuration },
       ];
 
       mobileLeftLogos.forEach(({ ref, path, progress, duration }) => {
@@ -409,11 +407,11 @@ export default function TechSolLandingPage() {
         tween.progress(progress);
       });
 
-      // Right side mobile icons (all moving along the INSIDE right curve)
+      // Right side mobile icons (all moving along the INSIDE right curve, matching left positions symmetrically)
       const mobileRightLogos = [
-        { ref: mRightLogo1Ref, path: "#mobileRightPath1", progress: 0.166, duration: 15 },
-        { ref: mRightLogo2Ref, path: "#mobileRightPath1", progress: 0.5, duration: 15 },
-        { ref: mRightLogo3Ref, path: "#mobileRightPath1", progress: 0.833, duration: 15 },
+        { ref: mRightLogo1Ref, path: "#mobileRightPath1", progress: 0.15, duration: mobileDuration },
+        { ref: mRightLogo2Ref, path: "#mobileRightPath1", progress: 0.483, duration: mobileDuration },
+        { ref: mRightLogo3Ref, path: "#mobileRightPath1", progress: 0.816, duration: mobileDuration },
       ];
 
       mobileRightLogos.forEach(({ ref, path, progress, duration }) => {
@@ -436,16 +434,12 @@ export default function TechSolLandingPage() {
     return () => mm.revert();
   }, []);
 
-  const duplicatedServices = [...services, ...services, ...services, ...services];
-
-  const counters = ["+52", "+84", "+116"];
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCounterIndex((prev) => (prev + 1) % counters.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, [counters.length]);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -464,21 +458,6 @@ export default function TechSolLandingPage() {
     setCurrentIndex((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
   };
 
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 300 : -300,
-      opacity: 0,
-    }),
-  };
-
   const firstCard = REVIEWS[currentIndex];
   const secondCard = REVIEWS[(currentIndex + 1) % REVIEWS.length];
 
@@ -486,17 +465,22 @@ export default function TechSolLandingPage() {
   const frameworkSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    // Desktop only: Pin during scroll
+    mm.add("(min-width: 768px)", () => {
       if (!frameworkSectionRef.current) return;
 
-      ScrollTrigger.create({
+      const trigger = ScrollTrigger.create({
         trigger: frameworkSectionRef.current,
         start: "top top",
-        end: "+=2200",
+        end: "+=1800",
         pin: true,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: 0.6,
         anticipatePin: 1,
+        fastScrollEnd: true,
+        preventOverlaps: true,
         onUpdate: (self) => {
           const stepIndex = Math.min(
             frameworkSteps.length - 1,
@@ -505,14 +489,30 @@ export default function TechSolLandingPage() {
           setCurrentFrameworkIdx(stepIndex);
         },
       });
-    }, frameworkSectionRef);
 
-    return () => ctx.revert();
+      return () => {
+        trigger.kill();
+      };
+    });
+
+    return () => mm.revert();
   }, []);
 
   const handleFrameworkStepClick = (index: number) => {
     setCurrentFrameworkIdx(index);
   };
+
+  // Mobile: Smooth auto-cycler every 5 seconds if on small screens
+  useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    if (!isMobile) return;
+
+    const timer = setInterval(() => {
+      setCurrentFrameworkIdx((prev) => (prev + 1) % frameworkSteps.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -524,15 +524,22 @@ export default function TechSolLandingPage() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      autoRaf: true,
       duration: 1.2,
       smoothWheel: true,
       touchMultiplier: 1.5,
     });
 
-    lenis.on('scroll', ScrollTrigger.update);
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const updateTicker = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateTicker);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
+      gsap.ticker.remove(updateTicker);
       lenis.destroy();
     };
   }, []);
@@ -552,7 +559,7 @@ export default function TechSolLandingPage() {
           fill
           priority
           sizes="100vw"
-          className="hidden md:block object-fill object-center -z-0"
+          className="hidden md:block object-fill object-center z-0"
         />
 
         {/* MOBILE BACKGROUND IMAGE (9:16 CURVED-LINE REFERENCE) */}
@@ -562,12 +569,12 @@ export default function TechSolLandingPage() {
           fill
           priority
           sizes="100vw"
-          className="block md:hidden object-cover object-center -z-0"
+          className="block md:hidden object-cover object-center z-0"
         />
 
         {/* DESKTOP SVG MOTION PATHS */}
         <svg
-          className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-20"
+          className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-[1]"
           viewBox="0 0 1000 1000"
           preserveAspectRatio="none"
         >
@@ -589,7 +596,7 @@ export default function TechSolLandingPage() {
 
         {/* MOBILE SVG MOTION PATHS (PRECISELY ALIGNED TO MOBILE INSIDE CURVES) */}
         <svg
-          className="block md:hidden absolute inset-0 w-full h-full pointer-events-none z-20"
+          className="block md:hidden absolute inset-0 w-full h-full pointer-events-none z-[1]"
           viewBox="0 0 576 1024"
           preserveAspectRatio="xMidYMid slice"
         >
@@ -610,7 +617,7 @@ export default function TechSolLandingPage() {
         </svg>
 
         {/* DESKTOP FLOATING LOGO ICONS (FOLLOWING DESKTOP SIDE CURVES) */}
-        <div className="hidden md:block absolute inset-0 pointer-events-none z-20">
+        <div className="hidden md:block absolute inset-0 pointer-events-none z-[1]">
           <Image
             ref={logo1Ref}
             src="/A.jpeg"
@@ -673,7 +680,7 @@ export default function TechSolLandingPage() {
         </div>
 
         {/* MOBILE FLOATING LOGO ICONS (FOLLOWING MOBILE INSIDE CURVED RAILS - LARGER SIZE) */}
-        <div className="block md:hidden absolute inset-0 pointer-events-none z-20">
+        <div className="block md:hidden absolute inset-0 pointer-events-none z-[1]">
           <Image
             ref={mLogo1Ref}
             src="/A.jpeg"
@@ -784,9 +791,9 @@ export default function TechSolLandingPage() {
           </motion.p>
 
           {/* Action Buttons Row */}
-          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 relative pb-14 sm:pb-20 z-10">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 relative pb-8 sm:pb-20 z-10">
             {/* Column 1: Discuss Button */}
-            <div className="relative">
+            <div className="relative flex flex-col items-center">
               <motion.div
                 custom={0.15}
                 initial="hidden"
@@ -801,13 +808,13 @@ export default function TechSolLandingPage() {
               </motion.div>
 
               {/* Handwritten Annotation Arrow */}
-              <div className="absolute -left-12 top-full pt-2 flex flex-col items-start select-none pointer-events-none w-[200px]">
+              <div className="relative sm:absolute sm:-left-12 sm:top-full pt-1.5 sm:pt-2 flex flex-col items-center sm:items-start select-none pointer-events-none w-full sm:w-[200px]">
                 <svg
                   width="44"
                   height="36"
                   viewBox="0 0 44 36"
                   fill="none"
-                  className="text-[#ff6321] overflow-visible mb-1 ml-6"
+                  className="text-[#ff6321] overflow-visible mb-0.5 sm:mb-1 mx-auto sm:ml-6 sm:mx-0"
                 >
                   <motion.path
                     d="M 6 30 C 6 16, 18 6, 36 6"
@@ -831,7 +838,7 @@ export default function TechSolLandingPage() {
                 </svg>
 
                 <motion.p
-                  className={`${caveat.className} text-[12px] font-normal leading-[1.2em] text-[#ff6321] text-left tracking-normal whitespace-nowrap`}
+                  className={`${caveat.className} text-[13px] sm:text-[12px] font-normal leading-[1.2em] text-[#ff6321] text-center sm:text-left tracking-normal whitespace-nowrap`}
                   variants={{
                     hidden: { opacity: 0 },
                     visible: {
@@ -934,7 +941,7 @@ export default function TechSolLandingPage() {
             <div className="mb-4 p-2.5 bg-white rounded-xl border border-neutral-200/60 shadow-sm flex items-center justify-center w-12 h-12">
               <div className="relative w-7 h-7 flex-shrink-0">
                 <Image
-                  src="/logo.png"
+                  src="/InalNYrT8dLQ4UagvbmFexbdio.avif"
                   alt="Logo"
                   fill
                   sizes="28px"
@@ -960,11 +967,12 @@ export default function TechSolLandingPage() {
           {/* UPPER SLIDER ROW */}
           <div className="w-full flex overflow-hidden relative py-4 z-10">
             <motion.div
-              className="flex gap-6 whitespace-nowrap flex-nowrap"
+              className="flex gap-6 whitespace-nowrap flex-nowrap transform-gpu"
+              style={{ willChange: "transform" }}
               animate={{ x: ["-33.33%", "0%"] }}
               transition={{
                 ease: "linear",
-                duration: 60,
+                duration: 120, // Slow, elegant scrolling speed
                 repeat: Infinity,
               }}
             >
@@ -988,11 +996,12 @@ export default function TechSolLandingPage() {
           {/* LOWER SLIDER ROW */}
           <div className="w-full flex overflow-hidden relative py-4 mt-6 z-10">
             <motion.div
-              className="flex gap-6 whitespace-nowrap flex-nowrap"
+              className="flex gap-6 whitespace-nowrap flex-nowrap transform-gpu"
+              style={{ willChange: "transform" }}
               animate={{ x: ["0%", "-33.33%"] }}
               transition={{
                 ease: "linear",
-                duration: 60,
+                duration: 120, // Slow, elegant scrolling speed
                 repeat: Infinity,
               }}
             >
@@ -1032,7 +1041,7 @@ export default function TechSolLandingPage() {
               <div className="mb-3 p-2.5 bg-white rounded-xl border border-neutral-200/50 shadow-sm flex items-center justify-center w-11 h-11">
                 <div className="relative w-6 h-6 flex-shrink-0">
                   <Image
-                    src="/logo.png"
+                    src="/InalNYrT8dLQ4UagvbmFexbdio.avif"
                     alt="Logo"
                     fill
                     sizes="24px"
@@ -1109,8 +1118,63 @@ export default function TechSolLandingPage() {
           </div>
 
           {/* COMPARISON TABLE COMPONENT */}
+          {/* MOBILE VIEW (< md): Stacked comparison card exactly like 2nd image */}
           <motion.div
-            className="w-full bg-white rounded-3xl border border-neutral-200/60 shadow-[0_4px_30px_rgba(0,0,0,0.02)] grid grid-cols-2 relative font-sans text-left mt-6 mb-6"
+            className="block md:hidden w-full bg-white rounded-3xl border border-neutral-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden font-sans text-left mt-4 mb-6"
+            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 100,
+              damping: 16,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.2,
+            }}
+          >
+            {/* Top Half: Other agencies */}
+            <div className="flex flex-col bg-white p-6 pb-2">
+              <h3 className="text-xl font-bold text-[#0A0A0A] mb-4">Other agencies</h3>
+              <div className="flex flex-col">
+                {comparisons.map((item, idx) => (
+                  <div
+                    key={`mobile-other-${idx}`}
+                    className="py-3.5 text-[#2E3748] font-medium text-sm flex items-center gap-3 border-t border-neutral-100"
+                  >
+                    <span className="text-neutral-400 text-xs font-bold select-none">❯</span>
+                    <span>{item.other}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Half: TechSol Media */}
+            <div
+              className={`flex flex-col p-6 pb-6 transition-all duration-300 ${
+                isSection3Toggled
+                  ? "bg-[#EBEAE8] text-[#0A0A0A]"
+                  : "bg-[#FDA466] text-[#0A0A0A]"
+              }`}
+            >
+              <h3 className="text-xl font-bold mb-4">TechSol Media</h3>
+              <div className="flex flex-col">
+                {comparisons.map((item, idx) => (
+                  <div
+                    key={`mobile-us-${idx}`}
+                    className="py-3.5 font-semibold text-sm flex items-center gap-3 border-t border-black/10"
+                  >
+                    <span className="text-[#0A0A0A]/70 text-xs font-bold select-none">❯</span>
+                    <span>{item.us}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* DESKTOP VIEW (>= md): Side-by-side floating comparison table */}
+          <motion.div
+            className="hidden md:grid w-full bg-white rounded-3xl border border-neutral-200/60 shadow-[0_4px_30px_rgba(0,0,0,0.02)] grid-cols-2 relative font-sans text-left mt-6 mb-6"
             initial={{ opacity: 0, y: 60, scale: 0.96 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             transition={{
@@ -1125,14 +1189,14 @@ export default function TechSolLandingPage() {
           >
             {/* Other Agencies (Left Side) */}
             <div className="flex flex-col py-6">
-              <div className="p-6 sm:p-8 pt-2">
+              <div className="p-8 pt-2">
                 <h3 className="text-xl font-bold text-[#0A0A0A]">Other agencies</h3>
               </div>
               <div className="flex flex-col gap-1">
                 {comparisons.map((item, idx) => (
                   <div
-                    key={idx}
-                    className="px-6 sm:px-8 py-4 text-neutral-500 font-medium text-sm flex items-center gap-3 border-t border-neutral-100"
+                    key={`desktop-other-${idx}`}
+                    className="px-8 py-4 text-neutral-500 font-medium text-sm flex items-center gap-3 border-t border-neutral-100"
                   >
                     <span className="text-neutral-400 text-xs font-bold select-none">❯</span>
                     <span>{item.other}</span>
@@ -1141,21 +1205,22 @@ export default function TechSolLandingPage() {
               </div>
             </div>
 
-            {/* TechSol Media */}
+            {/* TechSol Media (Right Floating Side) */}
             <div
-              className={`flex flex-col rounded-3xl absolute top-0 bottom-0 right-0 left-[50%] -my-6 border border-white/20 z-10 py-6 transition-all duration-300 ${isSection3Toggled
-                ? "bg-[#EBEAE8] text-[#0A0A0A] shadow-[0_20px_40px_rgba(0,0,0,0.08)]"
-                : "bg-[#FDA466] text-[#0A0A0A] shadow-[0_20px_40px_rgba(253,164,102,0.25)]"
-                }`}
+              className={`flex flex-col rounded-3xl absolute top-0 bottom-0 right-0 left-[50%] -my-6 border border-white/20 z-10 py-6 transition-all duration-300 ${
+                isSection3Toggled
+                  ? "bg-[#EBEAE8] text-[#0A0A0A] shadow-[0_20px_40px_rgba(0,0,0,0.08)]"
+                  : "bg-[#FDA466] text-[#0A0A0A] shadow-[0_20px_40px_rgba(253,164,102,0.25)]"
+              }`}
             >
-              <div className="p-6 sm:p-8 pt-2">
+              <div className="p-8 pt-2">
                 <h3 className="text-xl font-bold">TechSol Media</h3>
               </div>
               <div className="flex flex-col gap-1">
                 {comparisons.map((item, idx) => (
                   <div
-                    key={idx}
-                    className="px-6 sm:px-8 py-4 font-semibold text-sm flex items-center gap-3 border-t border-black/5"
+                    key={`desktop-us-${idx}`}
+                    className="px-8 py-4 font-semibold text-sm flex items-center gap-3 border-t border-black/5"
                   >
                     <span className="text-[#0A0A0A]/70 text-xs font-bold select-none">❯</span>
                     <span>{item.us}</span>
@@ -1289,8 +1354,8 @@ export default function TechSolLandingPage() {
 
           {/* Action Button */}
           <div className="relative inline-flex items-center flex-shrink-0">
-            {/* Arrow & Text - Aligned to the start/left of the button */}
-            <div className="absolute -top-16 left-1 flex flex-col items-start pointer-events-none select-none">
+            {/* Arrow & Text - Aligned to the start/left of the button (Desktop only to prevent mobile overlap) */}
+            <div className="hidden md:flex absolute -top-16 left-1 flex-col items-start pointer-events-none select-none">
               {/* Handwritten Text */}
               <motion.p
                 className={`${caveat?.className ?? ""} text-[13px] text-[#ff6321] whitespace-nowrap mb-0.5 ml-2`}
@@ -1372,16 +1437,58 @@ export default function TechSolLandingPage() {
           </div>
         </div>
 
-        {/* OUTER WRAPPER CONTAINER WITH INSET SHADOW & BORDER */}
-        <div className="w-full border border-solid border-[#fff] bg-[#eeecea] py-6 shadow-[inset_0px_0px_6px_0px_#0606122e]">
+        {/* MOBILE VIEW (< md): Stacked vertically inside outer wrapper card (Matches 2nd image) */}
+        <div className="block md:hidden px-4 sm:px-6">
+          <div className="w-full border border-solid border-[#fff] bg-[#eeecea] p-4 sm:p-5 rounded-3xl shadow-[inset_0px_0px_6px_0px_#0606122e] flex flex-col gap-4">
+            {services.map((service, idx) => (
+              <div
+                key={`mobile-service-${service.id || idx}`}
+                className="w-full bg-white rounded-2xl border border-neutral-200/80 p-6 flex flex-col justify-between gap-4 shadow-sm"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="text-xl font-bold tracking-tight text-[#060612] leading-snug">
+                      {service.title}
+                    </h3>
+                    <div className="w-10 h-10 rounded-xl bg-[#FAF9F9] border border-neutral-200/60 flex items-center justify-center flex-shrink-0">
+                      {service.icon}
+                    </div>
+                  </div>
+
+                  <div className="w-full border-b border-dashed border-neutral-200/80 my-3.5" />
+
+                  <p className="text-[#69686E] text-sm leading-relaxed font-normal">
+                    {service.description}
+                  </p>
+                </div>
+
+                {/* Service Tag Pills */}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {service.tags?.map((tag: string) => (
+                    <span
+                      key={`mob-tag-${tag}-${idx}`}
+                      className="text-[10px] font-bold tracking-wider text-neutral-600 bg-neutral-100/90 border border-neutral-200/60 px-3 py-1.5 rounded-lg uppercase"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW (>= md): Horizontal infinite slider container */}
+        <div className="hidden md:block w-full border border-solid border-[#fff] bg-[#eeecea] py-6 shadow-[inset_0px_0px_6px_0px_#0606122e]">
           {/* HORIZONTAL SLIDER (RIGHT TO LEFT AT LOW SPEED) */}
           <div className="w-full flex overflow-hidden relative z-10">
             <motion.div
-              className="flex gap-6 whitespace-nowrap flex-nowrap"
+              className="flex gap-6 whitespace-nowrap flex-nowrap transform-gpu"
+              style={{ willChange: "transform" }}
               animate={{ x: ["0%", "-50%"] }} // Moves right-to-left
               transition={{
                 ease: "linear",
-                duration: 55, // Slow, aesthetic speed
+                duration: 90, // Slow, aesthetic speed
                 repeat: Infinity,
               }}
             >
@@ -1426,17 +1533,16 @@ export default function TechSolLandingPage() {
       </motion.section>
 
       {/* ================= SECTION 5: FEATURED PROJECTS ================= */}
-      <motion.section className="w-full bg-[#F5F5F5] py-24 overflow-hidden relative z-10 font-sans antialiased"
-        initial={{ opacity: 0, y: 60, scale: 0.96 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      <motion.section className="w-full bg-[#F5F5F5] py-20 sm:py-24 overflow-hidden relative z-10 font-sans antialiased"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 16,
+          duration: 0.7,
+          ease: [0.16, 1, 0.3, 1],
         }}
         viewport={{
           once: true,
-          amount: 0.2,
+          amount: 0.15,
         }}>
         <div className="max-w-5xl mx-auto px-6 flex flex-col items-center text-center">
 
@@ -1528,11 +1634,11 @@ export default function TechSolLandingPage() {
 
         {/* CAROUSEL CONTAINER WITH INSET BORDER */}
         <div className="w-full mt-16 overflow-hidden px-4 md:px-0">
-          <div className="max-w-5xl mx-auto px-6 relative">
+          <div className="max-w-5xl mx-auto px-0 sm:px-6 relative">
 
             <div
               className="flex gap-6 transition-transform duration-700 ease-out"
-              style={{ transform: `translateX(-${activeProject * 100}%)` }}
+              style={{ transform: `translateX(calc(-${activeProject} * (100% + 1.5rem)))` }}
             >
               {projects.map((proj, idx) => {
                 const isActive = idx === activeProject;
@@ -1540,11 +1646,11 @@ export default function TechSolLandingPage() {
                   /* CARD WRAPPER WITH INSET SHADOW BORDER */
                   <div
                     key={proj.title || idx}
-                    className={`min-w-full md:min-w-[100%] border border-solid border-[#fff] rounded-[24px] bg-[#eeecea] p-3 shadow-[inset_0px_0px_6px_0px_#0606122e] transition-all duration-500 ${isActive ? "opacity-100 scale-100" : "opacity-40 scale-[0.97]"
+                    className={`min-w-full w-full shrink-0 border border-solid border-[#fff] rounded-[24px] bg-[#eeecea] p-3 shadow-[inset_0px_0px_6px_0px_#0606122e] transition-all duration-500 ${isActive ? "opacity-100 scale-100" : "opacity-40 scale-[0.97]"
                       }`}
                   >
                     {/* INNER CARD CONTENT */}
-                    <div className="w-full bg-white rounded-[16px] border border-neutral-200/70 p-8 sm:p-12 flex flex-col md:flex-row gap-8 items-center shadow-[0_4px_30px_rgba(0,0,0,0.02)]">
+                    <div className="w-full bg-white rounded-[16px] border border-neutral-200/70 p-6 sm:p-12 flex flex-col md:flex-row gap-6 md:gap-8 items-center shadow-[0_4px_30px_rgba(0,0,0,0.02)]">
                       <div className="flex flex-col justify-between flex-1 pr-0 md:pr-4 text-left items-start h-full gap-6">
                         <div className="flex flex-col gap-4 w-full">
                           <h3 className="text-2xl sm:text-3xl font-semibold text-[#0A0A0A] tracking-tight font-sans">
@@ -1568,7 +1674,7 @@ export default function TechSolLandingPage() {
                         </div>
                       </div>
 
-                      <div className="flex-1 w-full h-[320px] sm:h-[400px] rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/40 relative">
+                      <div className="flex-1 w-full h-[280px] sm:h-[400px] rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/40 relative">
                         <Image
                           src={proj.img}
                           alt={`${proj.title} showcase visual representation`}
@@ -1600,10 +1706,10 @@ export default function TechSolLandingPage() {
         </div>
       </motion.section>
 
-      {/* ================= SECTION 6: FRAMEWORK (GSAP SCROLLTRIGGER PINNED) ================= */}
+      {/* ================= SECTION 6: FRAMEWORK ================= */}
       <section
         ref={frameworkSectionRef}
-        className="w-full min-h-screen flex flex-col items-center justify-center bg-[#F5F5F5] font-sans antialiased py-8 px-4 sm:px-6 relative overflow-hidden z-10"
+        className="w-full min-h-screen flex flex-col items-center justify-center bg-[#F5F5F5] font-sans antialiased py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden z-10"
       >
         <div className="max-w-3xl mx-auto flex flex-col items-center text-center w-full">
 
@@ -1807,7 +1913,7 @@ export default function TechSolLandingPage() {
               <motion.div
                 key={currentIndex}
                 custom={direction}
-                variants={variants}
+                variants={reviewSlideVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
@@ -1904,11 +2010,11 @@ export default function TechSolLandingPage() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={fadeInUp}
-        className="mt-16 mx-auto w-full max-w-[1000px] bg-[#F4F2F0] rounded-[16px] border border-white p-5 flex items-center justify-center relative shadow-[inset_0px_0px_6px_0px_rgba(6,6,18,0.18)] overflow-clip"
+        className="mt-16 mx-auto w-full max-w-[1000px] bg-[#F4F2F0] rounded-[24px] sm:rounded-[28px] border border-white p-3 sm:p-4 md:p-5 flex items-center justify-center relative shadow-[inset_0px_0px_6px_0px_rgba(6,6,18,0.18)] overflow-hidden"
       >
         <motion.div
           variants={containerStagger}
-          className="w-full h-[400px] relative rounded-[12px] overflow-hidden bg-gradient-to-br from-[#FCDAA2] via-[#FBA85B] to-[#FF5500] flex flex-col md:flex-row items-center justify-between px-10 md:px-16 py-8 shadow-sm"
+          className="w-full h-auto md:h-[400px] relative rounded-[16px] md:rounded-[20px] bg-gradient-to-br from-[#FCDAA2] via-[#FBA85B] to-[#FF5500] flex flex-col md:flex-row items-start md:items-center justify-between p-6 sm:p-8 md:px-16 md:py-8 shadow-sm gap-8 md:gap-6"
         >
           <div className="absolute inset-0 pointer-events-none opacity-30">
             <div className="absolute top-[-50%] right-[-10%] w-[500px] h-[500px] rounded-full border-[30px] border-white"></div>
@@ -1916,55 +2022,77 @@ export default function TechSolLandingPage() {
           </div>
 
           {/* Left Column Text Content */}
-          <motion.div variants={fadeInUp} className="flex flex-col items-start max-w-sm md:max-w-md z-10 text-left">
+          <motion.div variants={fadeInUp} className="flex flex-col items-start max-w-sm md:max-w-md z-10 text-left w-full">
             <span className="text-[11px] font-bold tracking-widest text-[#0A0A0A]/60 uppercase mb-3">
               LET'S BUILD SOMETHING GREAT
             </span>
-            <h2 className="text-3xl md:text-[46px] font-extrabold tracking-tight text-[#0A0A0A] leading-[1.05] mb-8">
+            <h2 className="text-3xl sm:text-4xl md:text-[46px] font-extrabold tracking-tight text-[#0A0A0A] leading-[1.08] mb-6 md:mb-8">
               Ready to start your next project?
             </h2>
 
             {/* Direct Link redirecting to contact page form */}
             <Link
               href="/contact"
-              className="inline-block bg-[#05050A] text-white text-[13px] font-bold px-6 py-3.5 rounded-xl hover:bg-neutral-800 transition-colors shadow-md text-center cursor-pointer"
+              className="inline-block bg-[#05050A] text-white text-[13px] font-bold px-6 py-3.5 rounded-xl hover:bg-neutral-800 transition-colors shadow-md text-center cursor-pointer mb-2 md:mb-0"
             >
               Get started
             </Link>
           </motion.div>
 
-          {/* Right Floating Card */}
-          <motion.div variants={fadeInUp} className="bg-white/95 backdrop-blur-sm border border-white/60 p-6 rounded-2xl shadow-xl w-full max-w-[350px] z-10 relative text-left">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
-              <span className="text-[10px] font-bold tracking-wider text-[#737373] uppercase">
-                AVAILABLE FOR PROJECT
+          {/* Right Floating Card with AMANDA Tag */}
+          <div className="relative w-full max-w-full md:max-w-[350px] z-10">
+            {/* AMANDA Cursor Tag */}
+            <div className="absolute -top-3.5 right-2 sm:right-4 z-20 flex items-center gap-1 select-none pointer-events-none">
+              <svg className="w-4 h-4 text-[#05050A] fill-current drop-shadow-sm -rotate-12" viewBox="0 0 24 24">
+                <path d="M4 2l16 11-8 2-4 7z" />
+              </svg>
+              <span className="bg-[#05050A] text-white text-[10px] font-black tracking-wider px-3.5 py-1 rounded-full uppercase shadow-md">
+                AMANDA
               </span>
             </div>
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-full bg-neutral-300 flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-sm">
-                Pic
-              </div>
-              <span className="text-[#A3A3A3] font-semibold text-sm">+</span>
-              <div className="w-9 h-9 rounded-full bg-[#05050A] text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow-sm">
-                You
-              </div>
-            </div>
-            <h4 className="text-[17px] font-bold text-[#0A0A0A] tracking-tight">
-              Quick 15-minute call
-            </h4>
-            <p className="text-[13px] text-[#737373] font-medium mt-0.5">
-              Pick a time that works for you.
-            </p>
 
-            {/* Direct Link redirecting to contact page form */}
-            <Link
-              href="/contact"
-              className="mt-5 w-full block bg-[#FF5500] text-white text-[13px] font-bold py-3.5 rounded-xl hover:bg-[#E04B00] transition-colors shadow-sm text-center cursor-pointer"
+            {/* Inner White Card */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-white/95 backdrop-blur-sm border border-white/60 p-5 sm:p-6 rounded-2xl shadow-xl w-full text-left"
             >
-              Book a free call
-            </Link>
-          </motion.div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-5 h-5 rounded-full bg-neutral-300/60 flex items-center justify-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#05050A]"></span>
+                </div>
+                <span className="text-[10px] font-bold tracking-wider text-[#737373] uppercase">
+                  AVAILABLE FOR PROJECT
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5 mb-5">
+                <Image
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                  alt="Amanda"
+                  width={36}
+                  height={36}
+                  className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-sm"
+                />
+                <span className="text-[#A3A3A3] font-semibold text-sm">+</span>
+                <div className="w-9 h-9 rounded-full bg-[#05050A] text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow-sm">
+                  You
+                </div>
+              </div>
+              <h4 className="text-[17px] font-bold text-[#0A0A0A] tracking-tight">
+                Quick 15-minute call
+              </h4>
+              <p className="text-[13px] text-[#737373] font-medium mt-0.5">
+                Pick a time that works for you.
+              </p>
+
+              {/* Direct Link redirecting to contact page form */}
+              <Link
+                href="/contact"
+                className="mt-5 w-full block bg-[#FF5500] text-white text-[13px] font-bold py-3.5 rounded-xl hover:bg-[#E04B00] transition-colors shadow-sm text-center cursor-pointer"
+              >
+                Book a free call
+              </Link>
+            </motion.div>
+          </div>
         </motion.div>
       </motion.section>
       {/* ================= FOOTER ================= */}

@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "cd .. && npm install && npm run build && cp -r ../.next ./.next 2>/dev/null || xcopy ..\\.next .\\.next /E /I /Y || true",
+    "start": "cd .. && npm start",
     "lint": "eslint src --ext .ts"
   },
   "keywords": [
@@ -17,6 +17,9 @@
   "author": "TechSol Media",
   "license": "ISC",
   "dependencies": {
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
